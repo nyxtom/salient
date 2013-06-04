@@ -8,7 +8,7 @@ TreeTagger is a language independent part-of-speech tagger and a tool for analyz
 **Sample output:**
 
 ```
-word   pos 	lemma 
+word   pos   lemma 
 The 	DT 	the 
 TreeTagger 	NP 	TreeTagger 
 is 	VBZ 	be 
@@ -45,3 +45,11 @@ s.getCapture(1);           // = "a"
 s.getCapture(2);           // = "test"
 s.hasTerminated();         // = true
 ```
+
+### BabelNet
+BabelNet is a multilingual lexicalized semantic network and ontology. BabelNet was automatically created by linking the largest multilingual Web encyclopedia - i.e. Wikipedia - to the most popular computational lexicon of the English language - i.e. WordNet. The integration is performed by means of an automatic mapping and by filling in lexical gaps in resource-poor languages with the aid of statistical machine translation. The result is an "encyclopedic dictionary" that provides concepts and named entities lexicalized in many languages and connected with large amounts of semantic relations. 
+
+BabelNet (version 1.1.1) covers 6 European languages, namely: Catalan, French, German, English, Italian, and Spanish. BabelNet contains more than 5.5 million concepts and about 26 million word senses (regardless of their language). Each Babel synset contains 8.6 synonyms, i.e., word senses, on average, in any language. The semantic network includes all lexico-semantic relations from WordNet (hypernymy and hyponymy, meronymy and holonymy, antonymy and synonymy, etc., totaling around 364,000 relation edges) as well as an underspecified relatedness relation from Wikipedia (totally around 70 million relation edges).
+
+#### Uses of BabelNet
+Use cases of BabelNet will likely vary within the core applications, but it is very likely going to be useful in determining semantic relatedness for various common tasks within salient.io. The primary use case in word sense disambiguation will show useful in determing how to best categorize relevancy to a given query or in performing other tasks such as topic modeling. Further analysis can be done to determine how close a given query might relate to one or more unsupervised / categorized topics.
