@@ -115,7 +115,7 @@ module.exports.controllers = {
      *
      * By default, no prefix is used.
      */
-    prefix: '',
+    prefix: '/api',
 
 
 
