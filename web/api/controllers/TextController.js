@@ -15,12 +15,16 @@
  * @docs        :: http://sailsjs.org/#!documentation/controllers
  */
 
+var anchor = require('anchor');
+
+var TokenizeRequestModel = {
+    text: { type: 'string', required: true }
+};
+
 module.exports = {
 
-    parse: function (req, res) {
-        var obj = {};
-        obj.text = req.param('text');
-        res.json(obj);
+    tokenize: function (req, res) {
+        console.log(req);
     }
 
 };
