@@ -20,12 +20,13 @@ describe('regexp_tokenizer', function () {
     });
 
     it('should clean the input where possible', function () {
-        var t = new Tokenizer({ cleanPattern: /<\/?[A-Za-z]*>/g });
-        expect(t.clean('<text>data here to clean</text>')).toEqual('data here to clean');
+        var t = new Tokenizer({ cleanPattern: /(<([^>]+)>)/ig });
+        expect(t.clean('<div><a href="http://www.google.com" data-prop="bleh">data here to clean</a></div>'))
+              .toEqual('data here to clean');
     });
 
     it('should not clean when no trigger character exists', function () {
-        var t = new Tokenizer({ cleanPattern: /<\?[A-Za-z]*>/g, cleanTriggerChar: '<' });
+        var t = new Tokenizer({ cleanPattern: /(<([^>]+)>)/ig, cleanTriggerChar: '<' });
         var result = t.clean('this should not have to run the clean routine');
         expect(result).toEqual('this should not have to run the clean routine');
         expect(tokenizer.cleanMatch).toEqual(undefined);
