@@ -14,11 +14,10 @@ describe('regexp_tokenizer', function () {
         expect(tokenizer.clean(text)).toEqual(expectText);
 
         text = "In 1927, working with this diagrammatic form of knots, [[J.W. Alexander]] and G. B. Briggs, and independently [[Kurt Reidemeister]], demonstrated that two knot diagrams belonging to the same knot can be related by a sequence of three kinds of moves on the diagram, shown below. These operations, now called the '''Reidemeister moves''', are:" + 
-'' + 
-'        <ol style="list-style-type:upper-Roman">' + 
-'        <li> Twist and untwist in either direction.</li>' + 
-'        <li> Move one strand completely over another.</li>' + 
-'        <li> Move a strand completely over or under a crossing.</li>' + 
+'<ol style="list-style-type:upper-Roman">' + 
+'\r\n        <li> Twist and untwist in either direction.</li>' + 
+'\r\n        <li> Move one strand completely over another.</li>' + 
+'\r\n        <li> Move a strand completely over or under a crossing.</li>' + 
 '        </ol>' + 
 '' + 
 '    {| align="center" style="text-align:center"' + 
@@ -32,7 +31,7 @@ describe('regexp_tokenizer', function () {
 '        |-' + 
 '        | colspan="2" | <u>Type III</u>' + 
 "        |}";
-        expectText = "In 1927, working with this diagrammatic form of knots, J.W. Alexander and G. B. Briggs, and independently Kurt Reidemeister, demonstrated that two knot diagrams belonging to the same knot can be related by a sequence of three kinds of moves on the diagram, shown below. These operations, now called the '''Reidemeister moves''', are:                 Twist and untwist in either direction.         Move one strand completely over another.         Move a strand completely over or under a crossing.";
+        expectText = "In 1927, working with this diagrammatic form of knots, J.W. Alexander and G. B. Briggs, and independently Kurt Reidemeister, demonstrated that two knot diagrams belonging to the same knot can be related by a sequence of three kinds of moves on the diagram, shown below. These operations, now called the '''Reidemeister moves''', are:\r\n         Twist and untwist in either direction.\r\n         Move one strand completely over another.\r\n         Move a strand completely over or under a crossing.";
         expect(tokenizer.clean(text).trim()).toEqual(expectText);
     });
 
