@@ -16,15 +16,46 @@
  */
 
 var anchor = require('anchor');
+var Validator = anchor.Validator;
+var ArticleTokenizer = require('./../../../lib/salient/tokenizers/article_tokenizer');
 
-var TokenizeRequestModel = {
-    text: { type: 'string', required: true }
+/**
+ * Validates the given request values against the rule type using 
+ * the anchor validation framework.
+ */
+var validate = function (values, rules, done) {
+    var validator = new Validator();
+    validator.initialize(rules);
+    validator.validate(values, function (err) {
+        if (err) {
+            done(err);
+        }
+        else {
+            done();
+        }
+    });
 };
 
-module.exports = {
-
-    tokenize: function (req, res) {
-        console.log(req);
-    }
-
+/**
+ * Cleans the given text using the tokenization framework.
+ *
+ * @param req: Request containing text to clean.
+ */
+var clean = function (req, res) {
+    var query = req.query;
+    validate(query, { text: { type: 'string', required: true } }, function (err) {
+        if (err) {
+            res.json(err);
+        }
+        else {
+            var tokenizer = new ArticleTokenizer();
+            var text = tokenizer.clean(query.text);
+            res.json({
+                cleanText: text
+            });
+        }
+    });
 };
+
+module.exports = {};
+module.exports.clean = clean;

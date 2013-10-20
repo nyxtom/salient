@@ -36,7 +36,7 @@ module.exports.routes = {
     view: 'home/index'
   },
 
-  '/api/text/tokenize': 'TextController.tokenize',
+  '/api/text/clean': 'TextController.clean',
 
   /*
   // But what if you want your home page to display
