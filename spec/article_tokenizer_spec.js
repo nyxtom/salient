@@ -59,5 +59,12 @@ describe('regexp_tokenizer', function () {
         expect(t.clean(text)).toEqual(expectText);
     });
 
+    it('should tokenize input appropriately using the simple word punctuation rule', function () {
+        var text = "In 1927, working with this diagrammatic form of knots, J.W. Alexander and G. B. Briggs, and independently Kurt Reidemeister, demonstrated that two knot diagrams belonging to the same knot can be related by a sequence of three kinds of moves on the diagram, shown below. These operations, now called the '''Reidemeister moves''', are: Twist and untwist in either direction. Move one strand completely over another. Move a strand completely over or under a crossing.";
+        var tokens = tokenizer.tokenize(text);
+        var expectTokens = [ 'In', '1927', ', ', 'working', 'with', 'this', 'diagrammatic', 'form', 'of', 'knots', ', ', 'J', '.', 'W', '.', 'Alexander', 'and', 'G', '.', 'B', '.', 'Briggs', ', ', 'and', 'independently', 'Kurt', 'Reidemeister', ', ', 'demonstrated', 'that', 'two', 'knot', 'diagrams', 'belonging', 'to', 'the', 'same', 'knot', 'can', 'be', 'related', 'by', 'a', 'sequence', 'of', 'three', 'kinds', 'of', 'moves', 'on', 'the', 'diagram', ', ', 'shown', 'below', '.', 'These', 'operations', ', ', 'now', 'called', 'the', '\'', '\'', '\'', 'Reidemeister', 'moves', '\'', '\'', '\'', ', ', 'are', ':', 'Twist', 'and', 'untwist', 'in', 'either', 'direction', '.', 'Move', 'one', 'strand', 'completely', 'over', 'another', '.', 'Move', 'a', 'strand', 'completely', 'over', 'or', 'under', 'a', 'crossing', '.' ];
+        expect(tokens).toEqual(expectTokens);
+    });
+
 
 });
