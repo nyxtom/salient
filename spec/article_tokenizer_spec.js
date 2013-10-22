@@ -66,5 +66,11 @@ describe('regexp_tokenizer', function () {
         expect(tokens).toEqual(expectTokens);
     });
 
+    it('should tokenize urls appropriately', function () {
+        var text = "In 1927, working with this diagrammatic form of knots (http://www.google.com), J.W. Alexander (http://en.wikipedia.org/J.W._Alexander) and G. B. Briggs, and independently Kurt Reidemeister, demonstrated that two knot diagrams belonging to the same knot can be related by a sequence of three kinds of moves on the diagram, shown below. These operations, now called the '''Reidemeister moves''', are: Twist and untwist in either direction. Move one strand completely over another. Move a strand completely over or under a crossing.";
+        var tokens = tokenizer.tokenize(text);
+        var expectTokens = [ 'In', '1927', ', ', 'working', 'with', 'this', 'diagrammatic', 'form', 'of', 'knots', ' (', 'http://www.google.com', '), ', 'J', '.', 'W', '.', 'Alexander', ' (', 'http://en.wikipedia.org/J.W._Alexander', ') ', 'and', 'G', '.', 'B', '.', 'Briggs', ', ', 'and', 'independently', 'Kurt', 'Reidemeister', ', ', 'demonstrated', 'that', 'two', 'knot', 'diagrams', 'belonging', 'to', 'the', 'same', 'knot', 'can', 'be', 'related', 'by', 'a', 'sequence', 'of', 'three', 'kinds', 'of', 'moves', 'on', 'the', 'diagram', ', ', 'shown', 'below', '.', 'These', 'operations', ', ', 'now', 'called', 'the', '\'', '\'', '\'', 'Reidemeister', 'moves', '\'', '\'', '\'', ', ', 'are', ':', 'Twist', 'and', 'untwist', 'in', 'either', 'direction', '.', 'Move', 'one', 'strand', 'completely', 'over', 'another', '.', 'Move', 'a', 'strand', 'completely', 'over', 'or', 'under', 'a', 'crossing', '.' ];
+        expect(tokens).toEqual(expectTokens);
+    });
 
 });
