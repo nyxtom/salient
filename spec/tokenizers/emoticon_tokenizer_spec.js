@@ -1,4 +1,4 @@
-var Tokenizer = require('../lib/salient/tokenizers/emoticon_tokenizer'),
+var Tokenizer = require('../../lib/salient/tokenizers/emoticon_tokenizer'),
     tokenizer = new Tokenizer();
 
 describe('emoticon_tokenizer', function () {

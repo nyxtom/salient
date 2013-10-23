@@ -1,4 +1,4 @@
-var Tokenizer = require('../lib/salient/tokenizers/article_tokenizer'),
+var Tokenizer = require('../../lib/salient/tokenizers/article_tokenizer'),
     tokenizer = new Tokenizer();
 
 describe('article_tokenizer', function () {

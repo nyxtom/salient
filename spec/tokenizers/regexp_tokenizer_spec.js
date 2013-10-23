@@ -1,4 +1,4 @@
-var Tokenizer = require('../lib/salient/tokenizers/regexp_tokenizer'),
+var Tokenizer = require('../../lib/salient/tokenizers/regexp_tokenizer'),
     tokenizer = new Tokenizer({ pattern: /\W+/ });
 
 describe('regexp_tokenizer', function () {
