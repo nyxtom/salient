@@ -15,4 +15,10 @@ describe('wordpunct_tokenizer', function () {
         expect(tokens).toEqual([ 'data', ',', 'here', 'to', 'clean', '.', 'Wouldn', '\'', 't', 'you', 'say', 'so', '? ', 'I', 'have', '23.22', '!', 'Are', 'you', 'ok', '?' ]);
     });
 
+    it('should tokenize on words and punctuation and many numerics', function () {
+        var cleanText = 'data, here to clean.Wouldn\'t you say so? I have -23,323,234! Are you 2,234.00?';
+        var tokens = tokenizer.tokenize(cleanText);
+        expect(tokens).toEqual([ 'data', ',', 'here', 'to', 'clean', '.', 'Wouldn', '\'', 't', 'you', 'say', 'so', '? ', 'I', 'have', '-23,323,234', '!', 'Are', 'you', '2,234.00', '?' ]);
+    });
+
 });
