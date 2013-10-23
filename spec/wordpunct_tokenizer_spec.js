@@ -6,7 +6,7 @@ describe('wordpunct_tokenizer', function () {
     it('should tokenize on words and punctuation and money', function () {
         var cleanText = 'data, here to clean.Wouldn\'t you say so? I have $20.45, are you ok?';
         var tokens = tokenizer.tokenize(cleanText);
-        expect(tokens).toEqual([ 'data', ',', 'here', 'to', 'clean', '.', 'Wouldn', '\'', 't', 'you', 'say', 'so', '? ', 'I', 'have', '$20.45', ',', 'are', 'you', 'ok', '?' ]);
+        expect(tokens).toEqual([ 'data', ',', 'here', 'to', 'clean', '.', 'Wouldn', '\'', 't', 'you', 'say', 'so', '? ', 'I', 'have', ' $', '20.45', ',', 'are', 'you', 'ok', '?' ]);
     });
 
     it('should tokenize on words and punctuation and numerics', function () {
