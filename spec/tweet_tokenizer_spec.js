@@ -8,4 +8,11 @@ describe('regexp_tokenizer', function () {
             .toEqual([ 'RT', '@mparent77772', ':', 'Should', 'Obama', '\'', 's', '\'', 'internet', 'kill', 'switch', '\'', 'power', 'be', 'curbed', '? ', 'http://bbc.in/hcVGoz' ]);
     });
 
+    it('should tokenize where possible on emoticons', function () {
+        expect(tokenizer.tokenize("RT @sampleusername: this is typical :)"))
+            .toEqual([ 'RT', '@sampleusername', ':', 'this', 'is', 'typical', ':)' ]);
+        expect(tokenizer.tokenize(tokenizer.clean("HTML entities &amp; other Web oddities can be an &aacute;cute <em class='grumpy'>pain</em> >:(")))
+            .toEqual([ 'HTML', 'entities', ' & ', 'other', 'Web', 'oddities', 'can', 'be', 'an', 'ácute', 'pain', '>:(' ]);
+    });
+
 });
