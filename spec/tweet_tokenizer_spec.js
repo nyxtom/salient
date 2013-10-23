@@ -15,4 +15,9 @@ describe('regexp_tokenizer', function () {
             .toEqual([ 'HTML', 'entities', ' & ', 'other', 'Web', 'oddities', 'can', 'be', 'an', 'ácute', 'pain', '>:(' ]);
     });
 
+    it('should tokenize on cashtags, hashtags and usernames', function () {
+        expect(tokenizer.tokenize('RT @username: $APL is #amazing!!!'))
+            .toEqual([ 'RT', '@username', ':', '$APL', 'is', '#amazing', '!', '!', '!' ]);
+    });
+
 });
