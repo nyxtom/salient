@@ -1,0 +1,35 @@
+{
+  "name": "salientio",
+  "version": "0.1.0",
+  "description": "Salient is a natural language processing and sentiment analysis library",
+  "main": "index.js",
+  "scripts": {
+    "test": "make test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/nyxtom/salientio"
+  },
+  "keywords": [
+    "nlp",
+    "natual",
+    "language",
+    "processing",
+    "sentiment",
+    "natural",
+    "tokenization",
+    "part",
+    "of",
+    "speech",
+    "categorization"
+  ],
+  "author": "Thomas Holloway",
+  "license": "MIT",
+  "gitHead": "9e61a1238ef4182c328fc3cad89f5c7090e1b605",
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "underscore": "~1.5.2",
+    "twitter-text": "~1.6.1",
+    "ent": "~0.1.0"
+  }
+}
