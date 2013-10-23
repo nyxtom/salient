@@ -1,4 +1,4 @@
-var Tokenizer = require('../lib/salient/tokenizers/wordpunct_tokenizer'),
+var Tokenizer = require('../../lib/salient/tokenizers/wordpunct_tokenizer'),
     tokenizer = new Tokenizer();
 
 describe('wordpunct_tokenizer', function () {

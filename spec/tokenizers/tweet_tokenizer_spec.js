@@ -1,4 +1,4 @@
-var Tokenizer = require('../lib/salient/tokenizers/tweet_tokenizer'),
+var Tokenizer = require('../../lib/salient/tokenizers/tweet_tokenizer'),
     tokenizer = new Tokenizer();
 
 describe('regexp_tokenizer', function () {
