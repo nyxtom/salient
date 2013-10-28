@@ -30,7 +30,8 @@
   "dependencies": {
     "underscore": "~1.5.2",
     "twitter-text": "~1.6.1",
-    "ent": "~0.1.0"
+    "ent": "~0.1.0",
+    "treetagger": "~0.1.1"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
