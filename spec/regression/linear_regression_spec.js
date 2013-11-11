@@ -1,6 +1,7 @@
 
 var salient = require('./../../');
 var LinearRegression = salient.regression.LinearRegression;
+var plot = require('plotter').plot;
 
 describe('linear_regression', function () {
 
