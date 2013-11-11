@@ -33,7 +33,8 @@
     "ent": "~0.1.0",
     "treetagger": "~0.1.1",
     "sylvester": "0.0.21",
-    "readline": "0.0.3"
+    "readline": "0.0.3",
+    "plotter": "~0.4.3"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
