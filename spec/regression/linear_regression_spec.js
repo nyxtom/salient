@@ -22,4 +22,13 @@ describe('linear_regression', function () {
         expect(regression.calculate(result.theta, normalInput).e(1)).toEqual(293081.46436300856);
     });
 
+    it('should be able to perform regularization', function () {
+        var regression = new LinearRegression({ lambda: 1, regularization: true });
+        regression.load('./spec/regression/ex1data2.txt');
+        regression.normalize();
+        var result = regression.train();
+        var normalInput = regression.normalizeInput([1650,3]);
+        expect(regression.calculate(result.theta, normalInput).e(1)).toEqual(294135.15996768116);
+    });
+
 });
