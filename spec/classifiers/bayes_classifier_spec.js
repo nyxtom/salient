@@ -39,7 +39,6 @@ describe('bayes_classifier', function () {
             classifier.addExample(['read', 'book'], 'literature');
 
             var obj = classifier.save();
-            console.log(obj);
             var newClassifier = Classifier.restore(obj);
 
             newClassifier.addExample(['kick', 'ball'], 'sports');
