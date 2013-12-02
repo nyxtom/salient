@@ -18,4 +18,21 @@ describe('neural network classifier', function () {
         expect(maxIndex.col).toEqual(10);
     });
 
+    it('should be able to add examples and normalize them', function () {
+        var X = Matrix.load('./spec/math/samplesx.dat');
+        var y = Matrix.load('./spec/math/samplesy.dat');
+        var nn = new salient.neuralnetworks.NeuralNetwork();
+        var m = X.dimensions().rows;
+        for (var i = 1; i <= m; i++) {
+            var outputi = y.row(i).e(1,1);
+            var inputi = X.row(i).elements;
+            nn.addExample(inputi, outputi);
+        }
+        expect(nn.features).toEqual(undefined);
+        nn.normalize();
+        var dim = nn.features.dimensions();
+        expect(dim.cols).toEqual(401);
+        expect(dim.rows).toEqual(5000);
+    });
+
 });
