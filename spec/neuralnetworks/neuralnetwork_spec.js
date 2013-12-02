@@ -21,6 +21,13 @@ describe('neural network classifier', function () {
         expect(maxIndex.col).toEqual(10);
     });
 
+    it('should be able to correctly obtain the class', function () {
+        var nn = new salient.neuralnetworks.NeuralNetwork();
+        nn.trainedTheta = trainedTheta;
+        nn.labels = [1,2,3,4,5,6,7,8,9,10];
+        expect(nn.classify(sample)).toEqual(10);
+    });
+
     it('should be able to add examples and normalize them, and compute the cost', function () {
         var nn = new salient.neuralnetworks.NeuralNetwork();
         var m = X.dimensions().rows / 100;
