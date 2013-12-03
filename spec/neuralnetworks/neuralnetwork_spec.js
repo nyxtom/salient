@@ -21,6 +21,15 @@ describe('neural network classifier', function () {
         expect(maxIndex.col).toEqual(10);
     });
 
+    it('should be able to perform feedforward propagation with propagated output for a set of layered weights against an input feature vector', function () {
+        var nn = new salient.neuralnetworks.NeuralNetwork();
+        var result = nn.feedForward(trainedTheta, sample, true);
+        expect(result.length).toEqual(2);
+        var maxIndex = result[1].a.maxIndex();
+        expect(maxIndex.row).toEqual(1);
+        expect(maxIndex.col).toEqual(10);
+    });
+
     it('should be able to correctly obtain the class', function () {
         var nn = new salient.neuralnetworks.NeuralNetwork();
         nn.trainedTheta = trainedTheta;
@@ -30,7 +39,7 @@ describe('neural network classifier', function () {
 
     it('should be able to add examples and normalize them, and compute the cost', function () {
         var nn = new salient.neuralnetworks.NeuralNetwork();
-        var m = X.dimensions().rows / 100;
+        var m = X.dimensions().rows / 10;
         for (var i = 1; i <= m; i++) {
             var outputi = y.row(i).e(1,1);
             var inputi = X.row(i).elements;
@@ -40,10 +49,24 @@ describe('neural network classifier', function () {
         nn.normalize();
         var dim = nn.features.dimensions();
         expect(dim.cols).toEqual(401);
-        expect(dim.rows).toEqual(50);
+        expect(dim.rows).toEqual(500);
 
         var cost = nn.computeCost(trainedTheta, nn.features, nn.outputVector, 0.3);
-        expect(cost).toEqual(2.9057589324472515);
+        expect(cost).toEqual(0.2905758932447251);
+    });
+
+    it('should be able to backpropagate sample values', function () {
+        var nn = new salient.neuralnetworks.NeuralNetwork();
+        var m = X.dimensions().rows / 10;
+        for (var i = 1; i <= m; i++) {
+            var outputi = y.row(i).e(1,1);
+            var inputi = X.row(i).elements;
+            nn.addExample(inputi, outputi);
+        }
+        expect(nn.features).toEqual(undefined);
+        nn.labels = [1,2,3,4,5,6,7,8,9,10];
+        nn.normalize();
+        nn.backpropagate(trainedTheta, nn.features, nn.outputVector, 0.3);
     });
 
 });
