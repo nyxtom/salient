@@ -15,4 +15,10 @@ describe('matrix', function () {
         expect(dim.cols).toEqual(26);
     });
 
+    it('should be able to reshape and unroll values', function () {
+        var m1 = $M([[1,2,3],[4,5,6]]);
+        var reshaped = salient.math.Matrix.reshape([1,4,2,5,3,6], 2, 3).unroll().reshape(2,3);
+        expect(m1.eql(reshaped)).toEqual(true);
+    });
+
 });
