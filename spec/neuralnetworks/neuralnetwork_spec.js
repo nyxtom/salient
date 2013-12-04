@@ -40,6 +40,7 @@ describe('neural network classifier', function () {
     it('should be able to add examples and normalize them, and compute the cost', function () {
         var nn = new salient.neuralnetworks.NeuralNetwork();
         var m = X.dimensions().rows / 10;
+        nn.labels = [1,2,3,4,5,6,7,8,9,10];
         for (var i = 1; i <= m; i++) {
             var outputi = y.row(i).e(1,1);
             var inputi = X.row(i).elements;
@@ -51,8 +52,8 @@ describe('neural network classifier', function () {
         expect(dim.cols).toEqual(401);
         expect(dim.rows).toEqual(500);
 
-        var cost = nn.computeCost(trainedTheta, nn.features, nn.outputVector, 0.3);
-        expect(cost).toEqual(0.2905758932447251);
+        var cost = nn.computeCost(trainedTheta, nn.features, nn.outputVector, 0);
+        expect(cost).toEqual(0.14982239144665388);
     });
 
     it('should be able to backpropagate sample values', function () {
@@ -67,6 +68,25 @@ describe('neural network classifier', function () {
         nn.labels = [1,2,3,4,5,6,7,8,9,10];
         nn.normalize();
         nn.backpropagate(trainedTheta, nn.features, nn.outputVector, 0.3);
+    });
+
+    it('should be able to train the network', function () {
+        var nn = new salient.neuralnetworks.NeuralNetwork();
+        nn.labels = [1,2,3,4,5,6,7,8,9,10];
+        nn.lambda = 3;
+        nn.alpha = 0.09;
+        nn.iterations = 2;
+        var m = X.dimensions().rows / 10;
+        for (var i = 1; i <= m; i++) {
+            var outputi = y.row(i).e(1,1);
+            var inputi = X.row(i).elements;
+            nn.addExample(inputi, outputi);
+        }
+
+        var result = nn.train();
+        var value = result.cost[0];
+        var latestValue = result.cost[result.cost.length - 1];
+        expect(value > latestValue).toEqual(true);
     });
 
 });
