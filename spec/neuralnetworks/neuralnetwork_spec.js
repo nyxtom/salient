@@ -35,6 +35,19 @@ describe('neural network classifier', function () {
         nn.trainedTheta = trainedTheta;
         nn.labels = [1,2,3,4,5,6,7,8,9,10];
         expect(nn.classify(sample)).toEqual(10);
+        var m = X.dimensions().rows;
+        var misclassified = 0;
+        for (var i = 1; i <= m; i++) {
+            var outputi = y.row(i).e(1,1);
+            var inputi = X.row(i).elements;
+            inputi.unshift(1);
+            var isCorrect = nn.classify(inputi) == outputi;
+            if (!isCorrect) {
+                misclassified++;
+            }
+        }
+        var percentCorrect = (1.0 - (misclassified / m)) * 100.0;
+        expect(percentCorrect).toEqual(97.52);
     });
 
     it('should be able to add examples and normalize them, and compute the cost', function () {
