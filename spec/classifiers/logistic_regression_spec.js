@@ -1,5 +1,6 @@
 
 var Classifier = require('../../lib/salient/classifiers/logistic_regression');
+var CrossValidate = require('../../lib/salient/classifiers/crossvalidate');
 
 describe('logistic regression', function () {
     it('should be able to calculate the sigmoid function', function () {
@@ -10,17 +11,25 @@ describe('logistic regression', function () {
 
     it('should be able to add examples, train on them and successfully classify new inputs', function () {
         var classifier = new Classifier();
+        var samples = [];
+        var outputs = [];
         for (var i = 0; i < 10; i++) {
+            samples.push([i,i,i,i,i,i,i,i,i,i]);
+            outputs.push("0-9");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "0-9");
         }
         for (var i = 10; i < 20; i++) {
+            samples.push([i,i,i,i,i,i,i,i,i,i]);
+            outputs.push("10-20");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "10-20");
         }
         for (var i = 20; i < 30; i++) {
+            samples.push([i,i,i,i,i,i,i,i,i,i]);
+            outputs.push("20-30");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "20-30");
         }
         var normOutput = classifier.normalize();
-        var output = classifier.train();
+        classifier.train();
         var normInput = classifier.normalizeInput([1,2,3,1,4,2,3,4,5]);
         var label = classifier.classify(normInput);
         expect(label).toEqual('0-9');
@@ -32,5 +41,9 @@ describe('logistic regression', function () {
         normInput = classifier.normalizeInput([10,28,25,21,24,12,23,24,29]);
         label = classifier.classify(normInput);
         expect(label).toEqual('20-30');
+
+        var crossvalidate = new CrossValidate(Classifier);
+        var curve = crossvalidate.validationCurve([0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10], 
+                samples.slice(0, 18), outputs.slice(0, 18), samples.slice(18), outputs.slice(18));
     });
 });
