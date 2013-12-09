@@ -15,17 +15,14 @@ describe('logistic regression', function () {
         var outputs = [];
         for (var i = 0; i < 10; i++) {
             samples.push([i,i,i,i,i,i,i,i,i,i]);
-            outputs.push("0-9");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "0-9");
         }
         for (var i = 10; i < 20; i++) {
             samples.push([i,i,i,i,i,i,i,i,i,i]);
-            outputs.push("10-20");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "10-20");
         }
         for (var i = 20; i < 30; i++) {
             samples.push([i,i,i,i,i,i,i,i,i,i]);
-            outputs.push("20-30");
             classifier.addExample([i,i,i,i,i,i,i,i,i], "20-30");
         }
         var normOutput = classifier.normalize();
@@ -43,7 +40,22 @@ describe('logistic regression', function () {
         expect(label).toEqual('20-30');
 
         var crossvalidate = new CrossValidate(Classifier);
+        samples = samples.sort(function (x, y) { 
+            return Math.random();
+        });
+        for (var i = 0; i < samples.length; i++) {
+            if (samples[i][0] >= 20) {
+                outputs.push("20-30");
+            }
+            else if (samples[i][0] >= 10) {
+                outputs.push("10-20");
+            }
+            else {
+                outputs.push("0-9");
+            }
+        }
         var curve = crossvalidate.validationCurve([0, 0.001, 0.003, 0.01, 0.03, 0.1, 0.3, 1, 3, 10], 
-                samples.slice(0, 18), outputs.slice(0, 18), samples.slice(18), outputs.slice(18));
+                samples.slice(0, 22), outputs.slice(0, 22), samples.slice(22), outputs.slice(22));
+        //console.log(curve);
     });
 });
