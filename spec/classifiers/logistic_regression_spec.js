@@ -1,6 +1,6 @@
 
 var Classifier = require('../../lib/salient/classifiers/logistic_regression');
-var CrossValidate = require('../../lib/salient/classifiers/crossvalidate');
+var CrossValidate = require('../../lib/salient/crossvalidation/crossvalidate');
 
 describe('logistic regression', function () {
     it('should be able to calculate the sigmoid function', function () {
