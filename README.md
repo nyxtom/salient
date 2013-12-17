@@ -1,50 +1,56 @@
 # salient.io
-salient.io is a natural language processing and sentiment analysis engine. Salient.io is not a social analytics engine, it doesn't do brand recognition or custom brand analysis, salient.io will not visualize your Facebook dashboard and it will not tell you how to trade on the stock market. salient.io is about doing one thing and doing it really well - providing the best salience and natural language processing / text analytics api for a small monthly fee.
+salient.io is an artificial intelligence, computer vision, machine learning and natural language processing toolkit. Salient uses many of the broad machine learning concepts to perform various tasks such as: regression analysis, classification, clustering/segmentation, dimensionality reduction, collaborative filtering, feature analysis and more.
 
 ### Goals
-The goal of the project is to acquire several thousand users as a use case for leveraging various text analysis functions that are core to the system. Core functional goals of salient.io include the following:
+The goals of salient can be broken down into several categories of machine learning exercises. These are divided up by the type of task processed as well as providing a means for error correction and learning accuracy checks. 
 
-* Provide Deep Semantic Analysis
-* Sentiment Analysis
-* Question and Feedback Grouping Insight
-* Subjectivity Analysis
-* Irrelevance Scoring
-* Linear Regression and Bayesian Network Modeling
-* Provide a request credits based system for all api calls
-* Integrate Stripe for automated billing for tiered request call limits and pricing
-* Support 3 languages at start-up possibly including:
-  * English
-  * Spanish
-  * Mandarin Chinese
-* Be extremely fast (high concurrency, highly responsive)
-* Quantitative analysis for all aspects of expenses
-* Quality Customer Support and A/B Testing
-* Fault-tolerant and most importantly…
-* Automation everywhere
+1. Multivariate Linear Regression Analysis
+2. Multivariate Logistic Regression
+3. Neural Networks
+4. Convolutional Neural Networks
+4. Singular Value Decomposition
+5. Support Vector Machines
+6. k-means, sequential k-means
+7. Principal Component Analysis
+8. Sparse Autoencoders (or Nonlinear Principal Component Analysis)
+9. Manifold Learning
+10. Cross Validation
+11. F-Score, Precision/Recall, True-Negative/True-Positive/False-Negative/False-Positive
+12. Learning Curves, Validation Curves
+13. Gaussian Kernels, chi-square kernel, polynomial kernel
+14. Semantic Word Vectors
+15. Multivariate and Univariate Gaussian Distribution Analysis
+16. Multivariate and Univariate Skew-Normal Distribution Analysis
+17. Collaborative Filtering
+18. Min-batch and Stochastic Gradient Descent
+19. Stochastic Gradient Boosting Trees
+20. Mean-normalization
 
-These are the core business goals of salient.io and given a modest goal of reaching 1000 users all paying small monthly fees, salient.io should be a very maintainable project from the start.
+### Applications
+Finally, given the above machine learning tools, we can derive further goals for salient that allow us to perform tasks related to the following types of application examples:
 
-### Technology Considerations
-There are many aspects of developing technologies that should lead to the proper evaluation of using one set of tools over another. There should be careful consideration to the priorities of the core business that can attribute to the most effective technologies that can solve those immediate needs. Considerations need to be made for the following support infrastructure:
+1. Personalized Recommendation Systems
+2. Anomaly and Event Detection
+3. Feature Learning
+4. Single and Multi-class Classification
+5. Unsupervised Learning and Cluster Analysis
+6. Categorization and Segmentation
+7. Computer Vision, Face Recognition, Object Detection
+8. Computer Vision for Text Recognition
+9. Brand Analysis within Computer Vision
+10. Sentiment Analysis
+11. Trend Analysis
+12. Dimensionality Reduction
+13. Image Compression
+14. Question-Answering
 
-* Monitoring and Scale Automation
-* Highly Concurrent Requests, High Performance
-* Natural Language Processing Libraries
-* Math Libraries
-* Machine Learning
-* Fault Tolerant, High Write Load Database Storage
-* Productivity to Minimal Viable Product
-* Low Memory Footprint
-* Secure Infrastructure
-* Reusability
-* Zero-license dependencies (e.g. open source)
+This list can be expanded to a wide variety of use cases given that our toolkit provides a great starting ground for many of the well-known and popular machine learning techniques and algorithms. Test cases and usage can be found by looking within the *specs/* directory.
 
-### Timeline Goals
-Since there isn't much time available to build out a complete product (e.g. full-time schedule), there should be some basic baseline guidelines for building this out. This should take into consideration the percentage of time necessary and priorities devoted to scaling this properly.
+### Notes
 
-* Goal: 1000 users in 120 days
-* Requirements: Framework, API, Monitoring, Business, Billing, Website
-* Time allowed per week: 14 hrs/week 
+It should be noted that most machine learning algorithms would be better suited in environments that can take advantage of many cores, such as in the case of GPU accelerated machine learning. Such things are necessary in order to speed up the learning rate as well as the task at hand given that many complex linear algebra operations can be done efficiently in parallel. As a result, this project is more of an example test case implementation for a wide-variety of machine learning and artificial intelligence problems. For more robust implementations, it is recommended that you glean from my implementations and others (i.e. by reference to Andrew Ng's Machine Learning course) and use that within the scope of your projects. However, there are other techniques such as map-reduce that may be able to improve the performance of running some of these operations within this package on multiple cores and multiple systems in parallel.
 
-### Support and Dedication
-I would like to thank my best friend and wife-to-be for supporting me in this endeavor. If it wasn't for her I wouldn't be where I today and be able to achieve such aspiring and ambitious intentions. You are my sunshine :)
+### License
+
+MIT License
+
