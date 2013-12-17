@@ -46,6 +46,10 @@ Finally, given the above machine learning tools, we can derive further goals for
 
 This list can be expanded to a wide variety of use cases given that our toolkit provides a great starting ground for many of the well-known and popular machine learning techniques and algorithms. Test cases and usage can be found by looking within the *specs/* directory.
 
+### Notes
+
+It should be noted that most machine learning algorithms would be better suited in environments that can take advantage of many cores, such as in the case of GPU accelerated machine learning. Such things are necessary in order to speed up the learning rate as well as the task at hand given that many complex linear algebra operations can be done efficiently in parallel. As a result, this project is more of an example test case implementation for a wide-variety of machine learning and artificial intelligence problems. For more robust implementations, it is recommended that you glean from my implementations and others (i.e. by reference to Andrew Ng's Machine Learning course) and use that within the scope of your projects. However, there are other techniques such as map-reduce that may be able to improve the performance of running some of these operations within this package on multiple cores and multiple systems in parallel.
+
 ### License
 
 MIT License
