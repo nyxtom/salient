@@ -1,4 +1,4 @@
-var salient = require('./');
+var salient = require('./../');
 var path = require('path');
 
 var args = process.argv;
