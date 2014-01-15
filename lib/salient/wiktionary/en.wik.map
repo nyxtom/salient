@@ -1,0 +1,59 @@
+ajective -> ADJ
+proper noun 1 -> NOUN_PROP
+proper noun 2 -> NOUN_PROP
+proper noun 3 -> NOUN_PROP
+proper noun 4 -> NOUN_PROP
+proper noun 5 -> NOUN_PROP
+proper noun 6 -> NOUN_PROP
+proper noun 7 -> NOUN_PROP
+proper noun 8 -> NOUN_PROP
+proper noun 9 -> NOUN_PROP
+adposition -> ADP
+adjective form -> ADJ
+noun 1 -> NOUN
+noun 2 -> NOUN
+noun 3 -> NOUN
+noun 4 -> NOUN
+noun 5 -> NOUN
+noun 6 -> NOUN
+noun 7 -> NOUN
+noun 8 -> NOUN
+noun 9 -> NOUN
+noun phrase -> NOUN
+auxiliary verb -> AUX
+verb 1 -> VERB
+verb 2 -> VERB
+verb 3 -> VERB
+verb 4 -> VERB
+verb 5 -> VERB
+verb 6 -> VERB
+verb 7 -> VERB
+verb 8 -> VERB
+verb 9 -> VERB
+gerund -> NOUN_GERUND
+noun form -> NOUN
+verbal noun -> NOUN_VERBAL
+ordinal number -> NUM
+ordinal numeral -> NUM
+postposition -> ADP_POST
+prepositional phrase -> ADP_PREP
+number -> NUM
+adjectival noun -> NOUN_ADJ
+cardinal number -> NUM
+cardinal numeral -> NUM
+determiner -> DT
+verb form -> VERB
+pronoun -> NOUN_PROP
+participle -> VERB
+participle -> ADJ
+adverb -> ADV
+proper noun -> NOUN_PROP
+adjective -> ADJ
+noun -> NOUN
+verb -> VERB
+conjunction -> CONJ
+interjection -> UH
+prepositions -> ADP_PREP
+symbol -> SYM
+noun|case -> NOUN
+measure word -> NOUN_MEASURE
