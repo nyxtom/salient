@@ -1,0 +1,28 @@
+The files in this repository contain mappings from treebank specific tagsets
+to a set of 12 universal part-of-speech tags. The 12 universal tags are:
+
+VERB - verbs (all tenses and modes)
+NOUN - nouns (common and proper)
+PRON - pronouns 
+ADJ - adjectives
+ADV - adverbs
+ADP - adpositions (prepositions and postpositions)
+CONJ - conjunctions
+DET - determiners
+NUM - cardinal numbers
+PRT - particles or other function words
+X - other: foreign words, typos, abbreviations
+. - punctuation
+
+See "A Universal Part-of-Speech Tagset"
+by Slav Petrov, Dipanjan Das and Ryan McDonald, LREC '12
+
+Version 1.0 - Exactly as described in the paper above.
+Version 1.01 - Fixed one English mapping and renamed Basque mapping file.
+Version 1.02 - Added a Python interface to mappings, along with mappings for
+	       two English corpora (en-brown and en-tweet).
+Version 1.03 - Updated Danish and Spanish mappings accoridng to 
+	       "Wiki-ly Supervised Part-of-Speech Tagging,"
+	       by S. Li, J. Graca, and B. Taskar, EMNLP '12
+	       Also improved mappings for Italian and Russian treebanks.
+	       Finally, added mappings for Finnish, Hebrew and Polish.
