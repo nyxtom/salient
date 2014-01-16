@@ -1,13 +1,13 @@
 ajective -> ADJ
-proper noun 1 -> NOUN_PROP
-proper noun 2 -> NOUN_PROP
-proper noun 3 -> NOUN_PROP
-proper noun 4 -> NOUN_PROP
-proper noun 5 -> NOUN_PROP
-proper noun 6 -> NOUN_PROP
-proper noun 7 -> NOUN_PROP
-proper noun 8 -> NOUN_PROP
-proper noun 9 -> NOUN_PROP
+proper noun 1 -> PRON
+proper noun 2 -> PRON
+proper noun 3 -> PRON
+proper noun 4 -> PRON
+proper noun 5 -> PRON
+proper noun 6 -> PRON
+proper noun 7 -> PRON
+proper noun 8 -> PRON
+proper noun 9 -> PRON
 adposition -> ADP
 adjective form -> ADJ
 noun 1 -> NOUN
@@ -20,7 +20,7 @@ noun 7 -> NOUN
 noun 8 -> NOUN
 noun 9 -> NOUN
 noun phrase -> NOUN
-auxiliary verb -> AUX
+auxiliary verb -> VERB
 verb 1 -> VERB
 verb 2 -> VERB
 verb 3 -> VERB
@@ -30,30 +30,31 @@ verb 6 -> VERB
 verb 7 -> VERB
 verb 8 -> VERB
 verb 9 -> VERB
-gerund -> NOUN_GERUND
+gerund -> NOUN
 noun form -> NOUN
-verbal noun -> NOUN_VERBAL
+verbal noun -> NOUN
 ordinal number -> NUM
 ordinal numeral -> NUM
-postposition -> ADP_POST
-prepositional phrase -> ADP_PREP
+postposition -> ADP
+prepositional phrase -> ADP
 number -> NUM
-adjectival noun -> NOUN_ADJ
+adjectival noun -> NOUN
 cardinal number -> NUM
 cardinal numeral -> NUM
-determiner -> DT
+determiner -> DET
 verb form -> VERB
-pronoun -> NOUN_PROP
+pronoun -> PRON
 participle -> VERB
 participle -> ADJ
 adverb -> ADV
-proper noun -> NOUN_PROP
+proper noun -> PRON
 adjective -> ADJ
 noun -> NOUN
 verb -> VERB
 conjunction -> CONJ
-interjection -> UH
-prepositions -> ADP_PREP
-symbol -> SYM
+interjection -> X
+prepositions -> ADP
+symbol -> X
 noun|case -> NOUN
-measure word -> NOUN_MEASURE
+measure word -> NOUN
+particle -> PRT
