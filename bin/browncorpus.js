@@ -18,5 +18,6 @@ if (args.length > 3) {
 }
 
 var brown = new BrownCorpus(file);
-brown.output = path.join(outputDir, 'en-brown.tag.dist');
+brown.output = path.join(outputDir, 'en-brown.tag.vocab');
+brown.outputDist = path.join(outputDir, 'en-brown.tag.dist');
 brown.parse();
