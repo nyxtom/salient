@@ -50,7 +50,7 @@ function readDict(file, corpus) {
         if (corpus) {
             // TOKEN FREQUENCY POS/FREQ,POS/FREQ OR TOKEN FREQUENCY
             var w = items[0].toLowerCase();
-            vocab[w] = { freq: items[1], id: l.toString() }
+            vocab[w] = { freq: parseInt(items[1]), id: l.toString(), w: w }
             if (items.length > 2) {
                 vocab[w].pos = items[2];
             }
@@ -58,10 +58,11 @@ function readDict(file, corpus) {
         else if (items.length > 2) {
             // ID TOKEN POS,POS
             var w = items[1].toLowerCase();
-            vocab[w] = { pos: items[2], id: items[0] };
+            vocab[w] = { pos: items[2], id: items[0], w: w };
         }
     }
 
+    vocab._length = lines.length;
     return vocab;
 }
 
@@ -70,21 +71,22 @@ function mapCorpus(vocab, dist) {
         var pos = vocab[v].pos;
         if (pos) {
             var result = [];
+            var resultFreq = [];
             var items = pos.split(',');
             for (var i = 0; i < items.length; i++) {
                 var item = items[i].split('/');
                 var tag = item[0];
+                var tagFreq = item[1];
                 if (typeof dist[tag] != 'undefined') {
                     var tagId = dist[tag].i;
                     if (result.indexOf(tagId) < 0) {
                         result.push(tagId);
+                        resultFreq.push(tagFreq);
                     }
-                }
-                else {
-                    console.log('unmapped', v, vocab[v]);
                 }
             }
             vocab[v].pos = result.join(',');
+            vocab[v].posFreq = resultFreq.join(',');
         }
     }
 }
@@ -99,16 +101,28 @@ mapCorpus(corpusV, distribution);
 var corpusCovered = 0;
 var corpusUncovered = 0;
 var uncoveredOutput = path.join(__dirname, 'uncovered.corpus.vocab');
+var uncoveredSorted = [];
 for (var c in corpusV) {
     if (typeof dict[c] != 'undefined') {
         corpusCovered++;
     }
     else {
         var item = corpusV[c];
-        var additionLine = util.format('%s\t%s\t%s\n', item.id, c, item.pos);
-        fs.appendFileSync(uncoveredOutput, additionLine);
+        // determine if the item falls under a numeric or money category ala regex
+        if (c.match(/\$?\d+/)) {
+            continue;
+        }
+
+        uncoveredSorted.push(item);
         corpusUncovered++;
     }
+}
+
+uncoveredSorted = uncoveredSorted.sort(function (a, b) { return b.freq - a.freq });
+for (var i = 0; i < corpusUncovered; i++) {
+    var item = uncoveredSorted[i];
+    var additionLine = util.format('%s\t%s\t%s\t%s\n', dict._length + i, item.w, item.pos, item.posFreq);
+    fs.appendFileSync(uncoveredOutput, additionLine);
 }
 
 // Determine whether the vocabulary is a subset, supset, overlap or disjoint set of the corpus
@@ -124,7 +138,7 @@ for (var c in dict) {
 }
 
 console.log(util.format('%s found in vocab, %s not found in vocab. %s% covered', corpusCovered,
-            corpusUncovered, (corpusCovered / (corpusCovered + corpusUncovered))));
+            corpusUncovered, Math.round(100 * corpusCovered / (corpusCovered + corpusUncovered))));
 
 console.log(util.format('%s found in corpus, %s not found in corpus. %s% covered', countCovered,
-            countUncovered, (countCovered / (countCovered + countUncovered))));
+            countUncovered, Math.round(100 * countCovered / (countCovered + countUncovered))));
