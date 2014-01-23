@@ -17,7 +17,6 @@ var vocabFile = args[2];
 // initialize a vocabulary with the size 12 tagsets
 model.loadVocab(vocabFile, 12, function () {
     model.estimateVocabulary();
-    delete model.vocabulary;
     var s = JSON.stringify(model);
     fs.writeFileSync(path.join(__dirname, 'model.json'), s);
 });
