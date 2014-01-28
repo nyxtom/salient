@@ -58,3 +58,5 @@ symbol -> X
 noun|case -> NOUN
 measure word -> NOUN
 particle -> PRT
+article -> DET
+article form -> DET
