@@ -17,3 +17,6 @@ console.log(JSON.stringify(results));
 
 results = model.viterbi(['the','dog','is','chewing','on','my','leg',',','however','i','think','he','is','cute','and','i','really','like','him']);
 console.log(JSON.stringify(results));
+
+results = model.viterbi(['the','dog','is','beautiful','and','perfect']);
+console.log(JSON.stringify(results));
