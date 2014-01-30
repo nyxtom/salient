@@ -101,9 +101,12 @@ mapCorpus(corpusV, distribution);
 var corpusCovered = 0;
 var corpusUncovered = 0;
 var uncoveredOutput = path.join(__dirname, 'uncovered.corpus.vocab');
+var coveredOutput = path.join(__dirname, 'covered.corpus.vocab');
 var uncoveredSorted = [];
+var coveredSorted = [];
 for (var c in corpusV) {
     if (typeof dict[c] != 'undefined') {
+        coveredSorted.push(corpusV[c]);
         corpusCovered++;
     }
     else {
@@ -124,6 +127,14 @@ for (var i = 0; i < corpusUncovered; i++) {
     var additionLine = util.format('%s\t%s\t%s\t%s\n', dict._length + i, item.w, item.pos, item.posFreq);
     fs.appendFileSync(uncoveredOutput, additionLine);
 }
+
+coveredSorted = coveredSorted.sort(function (a, b) { return b.freq - a.freq });
+for (var i = 0; i < corpusCovered; i++) {
+    var item = coveredSorted[i];
+    var additionLine = util.format('%s\t%s\t%s\t%s\n', dict._length + i, item.w, item.pos, item.posFreq);
+    fs.appendFileSync(coveredOutput, additionLine);
+}
+
 
 // Determine whether the vocabulary is a subset, supset, overlap or disjoint set of the corpus
 var countCovered = 0;
