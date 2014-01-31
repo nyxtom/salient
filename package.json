@@ -39,7 +39,8 @@
     "node-expat": "~2.1.4",
     "iconv": "~2.0.7",
     "xml-object-stream": "~0.2.0",
-    "walk": "~2.2.1"
+    "walk": "~2.2.1",
+    "async": "~0.2.10"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
