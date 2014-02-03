@@ -53,9 +53,11 @@ for (var l = skip; l < limit; l++) {
         if (tokenPairs[i].trim().length == 0)
             continue;
 
-        var tokenPair = tokenPairs[i].trim().split('/');
-        tokens.push(tokenPair[0]);
-        expectedTags.push(tokenPair[1]);
+        var splitIndex = tokenPairs[i].trim().lastIndexOf('/');
+        var token = tokenPairs[i].trim().substring(0, splitIndex);
+        var tag = tokenPairs[i].trim().substring(splitIndex + 1);
+        tokens.push(token);
+        expectedTags.push(tag);
     }
 
     var results = model.viterbi(tokens);
@@ -71,22 +73,17 @@ for (var l = skip; l < limit; l++) {
             }
             else if (results.y[i] == 'X' && expectedTags[i] == '.') {
             }
-            else if (tokens[i] == 'to') {
+            else if (results.y[i] == '.' && expectedTags[i] == 'X') {
             }
             else if (results.y[i] != expectedTags[i]) {
+                var tag = expectedTags[i] + "/" + results.y[i];
                 if (!incorrectTokensToTags.hasOwnProperty(tokens[i])) {
                     incorrectTokensToTags[tokens[i]] = {};
                 }
-                if (!incorrectTokensToTags[tokens[i]].hasOwnProperty(expectedTags[i])) {
-                    incorrectTokensToTags[tokens[i]][expectedTags[i]] = {};
+                if (!incorrectTokensToTags[tokens[i]].hasOwnProperty(tag)) {
+                    incorrectTokensToTags[tokens[i]][tag] = 0;
                 }
-                if (!incorrectTokensToTags[tokens[i]][expectedTags[i]].hasOwnProperty(results.y[i])) {
-                    incorrectTokensToTags[tokens[i]][expectedTags[i]][results.y[i]] = 0;
-                }
-                incorrectTokensToTags[tokens[i]][expectedTags[i]][results.y[i]]++;
-                if (incorrectTokensToTags[tokens[i]][expectedTags[i]][results.y[i]] > 3000) {
-                    incorrectHigh = true;
-                }
+                incorrectTokensToTags[tokens[i]][tag]++;
                 incorrectTags++;
             }
         }
@@ -103,10 +100,10 @@ for (var l = skip; l < limit; l++) {
         for (var k = 0; k < results.y.length; k++) {
             newLine.push(tokens[k] + "/" + results.y[k]);
         }
-        if (incorrectHigh) {
-            console.log('\t', line);
-            console.log('\t', newLine.join(' '));
-        }
+        /*
+        console.log('\t', line);
+        console.log('\t', newLine.join(' '));
+        */
 
         if (!incorrectSentenceGroups.hasOwnProperty(incorrectTags.toString())) {
             incorrectSentenceGroups[incorrectTags.toString()] = 0;
@@ -118,6 +115,18 @@ for (var l = skip; l < limit; l++) {
     totalSentences++;
 }
 var endTime = new Date().getTime();
+
+var totalIncorrectTokensSort = [];
+for (var t in incorrectTokensToTags) {
+    var item = incorrectTokensToTags[t];
+    var total = 0;
+    for (var tag in item) {
+        total += item[tag];
+    }
+    totalIncorrectTokensSort.push({t: t, tags: item, total: total});
+}
+totalIncorrectTokensSort = totalIncorrectTokensSort.sort(function (a, b) { return a.total - b.total; });
+console.log(totalIncorrectTokensSort);
 
 var percentCorrect = 100.0 * ((totalSentences - incorrectSentences) / totalSentences);
 var percentTagsCorrect = 100.0 * ((totalTags - totalIncorrectTags) / totalTags);
