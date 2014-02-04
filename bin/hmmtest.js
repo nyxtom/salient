@@ -65,7 +65,10 @@ for (var l = skip; l < limit; l++) {
     var incorrectHigh = false;
     for (var i = 0; i < expectedTags.length; i++) {
         if (results.y.length > i) {
+            /*
             if (results.y[i] == "PRON" && expectedTags[i] == "NOUN") {
+            }
+            else if (results.y[i] == "NOUN" && expectedTags[i] == "PRON") {
             }
             else if (results.y[i] == "NUM" && expectedTags[i] == "NOUN") {
             }
@@ -75,7 +78,8 @@ for (var l = skip; l < limit; l++) {
             }
             else if (results.y[i] == '.' && expectedTags[i] == 'X') {
             }
-            else if (results.y[i] != expectedTags[i]) {
+            */
+            if (results.y[i] != expectedTags[i]) {
                 var tag = expectedTags[i] + "/" + results.y[i];
                 if (!incorrectTokensToTags.hasOwnProperty(tokens[i])) {
                     incorrectTokensToTags[tokens[i]] = {};
@@ -126,8 +130,8 @@ for (var t in incorrectTokensToTags) {
     totalIncorrectTokensSort.push({t: t, tags: item, total: total});
 }
 totalIncorrectTokensSort = totalIncorrectTokensSort.sort(function (a, b) { return a.total - b.total; });
-console.log(totalIncorrectTokensSort);
 
+//console.log(totalIncorrectTokensSort);
 var percentCorrect = 100.0 * ((totalSentences - incorrectSentences) / totalSentences);
 var percentTagsCorrect = 100.0 * ((totalTags - totalIncorrectTags) / totalTags);
 console.log('Finished processing:', totalSentences, 'sentences in', (endTime - startTime) / 1000, 'seconds. rate/second:', totalSentences / ((endTime - startTime) / 1000));
