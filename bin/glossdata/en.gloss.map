@@ -4,10 +4,12 @@ link*	do not,isnt,isn't,is not,am not,aint,is not being,isnt being,isn't being,a
 *	can not,can't,cannot,didnt,didn't did not,shouldnt,shouldn't,should not,couldnt,couldn't,could not,,wouldnt,would not,wouldn't,wont,won't,will not,cant,dont,don't,do not,mustnt,must not,mustn't,doesnt,doesn't,does not,havent,have not,haven't,arent,are not,aren't,isnt,is not,isn't,wasnt,was not,wasn't,shant,shan't,shall not,aint,ain't,nothing,neither,no one,nor,not,never,none,no,nobody,n't,nt,without,against,under,out of
 rep*	never,nobody,noone,no one,nothing,neither,nt,n't,not
 ques	what,when,where,which,who,whom,whose,why,how,does,is,do,dont,don't,isnt,isn't,am,are,was,will,did,have,had,has,could,should,shall,may,might,would
-timen	everyday,today,yesterday,about time,afterwards,at all times,at all hours,at last,back in the day,day after tomorrow,day before yesterday,from dawn to dusk,from dusk to dawn,hence,midnightmare,mid-nightmare,nocturnally,now,once,previously,right now,then,this evening,this afternoon,tomorrow,tonight,this morning,usually,previously,weekend,weekends,this week,weeks,months,month,year,years,hours,hour,minute,minutes,second,seconds,ago,milliseconds,millisecond,decade,decades,century,centuries,millennia,millenniums,millennium,time,way,ways
+timen	everyday,today,yesterday,about time,afterwards,at all times,at all hours,at last,back in the day,day after tomorrow,day before yesterday,from dawn to dusk,from dusk to dawn,hence,midnightmare,mid-nightmare,nocturnally,now,once,previously,right now,then,this evening,this afternoon,tomorrow,tonight,this morning,usually,previously,weekend,weekends,this week,weeks,months,month,year,years,hours,hour,minute,minutes,second,seconds,ago,milliseconds,millisecond,decade,decades,century,centuries,millennia,millenniums,millennium,time,way,ways,every
 stop	a,able,about,across,after,all,almost,rt,also,am,among,an,and,any,are,as,at,be,because,been,but,by,can,cannot,could,dear,did,do,does,either,else,ever,every,for,from,get,got,had,has,have,he,her,hers,him,his,how,however,i,if,in,into,is,it,its,just,least,let,likely,may,me,might,most,must,my,neither,no,nor,not,of,off,often,on,only,or,other,our,own,rather,said,say,says,she,should,since,so,some,than,that,the,their,them,then,there,these,they,this,tis,to,too,twas,us,wants,was,we,were,what,when,where,which,while,who,whom,why,will,with,would,yet,you,your,until,yt,4sq,lol,lmao,rofl,roflcopter,ltd,ly,jk,re,u,via,un,youre,yall,yours,system,nvm,nevermind,nevertheless,lot,ie,http,retweet,ff,re</value>
 coor*	but,yet,unless,however,nevertheless
 or	or,nor
 clause	at
 contr	's,'t,'d,'ll,'ve,'re,'all,'am,'m,'er
 to	to
+quote	’
+subjp	i,he,she,it,they,him,her,them,you,we,me
