@@ -26,7 +26,13 @@ if (args.length == 4) {
 
 var startTime = new Date().getTime();
 var tokens = 0;
+var skipped = 0;
 for (var i = 0; i < count; i++) {
+    if (!lines[i] || lines[i].trim().length == 0) {
+        skipped++;
+        continue;
+    }
+
     var items = lines[i].split('\t');
     var score = parseInt(items[0]);
     var text = items[1];
@@ -49,7 +55,8 @@ for (var i = 0; i < count; i++) {
 var endTime = new Date().getTime();
 var seconds = (endTime - startTime) / 1000;
 totalCorrect = correctPositive + correctNegative + correctNeutral;
+var totalProcessed = count - skipped;
 
-console.log('processed', lines.length, 'in', seconds, 'seconds', count / seconds, '/second');
+console.log('processed', lines.length, 'in', seconds, 'seconds', totalProcessed / seconds, '/second');
 console.log('processed', tokens, 'tokens in', seconds, 'seconds', tokens / seconds, '/ second');
-console.log('percent correct', (100.0 * totalCorrect / count ), 'percent incorrect', (100.0 * incorrect / count));
+console.log('percent correct', (100.0 * totalCorrect / totalProcessed ), 'percent incorrect', (100.0 * incorrect / totalProcessed));
