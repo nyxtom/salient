@@ -49,7 +49,7 @@ for (var i = 0; i < count; i++) {
         correctPositive++;
     }
     else {
-        console.log(score, result, text);
+//        console.log(score, result, text);
         incorrect++;
     }
 }
@@ -61,3 +61,9 @@ var totalProcessed = count - skipped;
 console.log('processed', lines.length, 'in', seconds, 'seconds', totalProcessed / seconds, '/second');
 console.log('processed', tokens, 'tokens in', seconds, 'seconds', tokens / seconds, '/ second');
 console.log('percent correct', (100.0 * totalCorrect / totalProcessed ), 'percent incorrect', (100.0 * incorrect / totalProcessed));
+console.log('total tokenization time', analyser.glossary.tokenTime, 'ms', analyser.glossary.tokenTime / totalProcessed, 'ms/iteration');
+console.log('total pos time', analyser.glossary.tagTime, 'ms', (analyser.glossary.tagTime) / totalProcessed, 'ms/iteration');
+console.log('total lemma time', analyser.glossary.lemmaTime, 'ms',  analyser.glossary.lemmaTime / totalProcessed, 'ms/iteration');
+console.log('total collapse time', analyser.glossary.collapseTime, 'ms',  analyser.glossary.collapseTime / totalProcessed, 'ms/iteration');
+console.log('total tag sentiment time', analyser.tagTime, 'ms', analyser.tagTime / totalProcessed, 'ms/iteration');
+console.log('total classify time', analyser.classifyTime, 'ms', analyser.classifyTime / totalProcessed, 'ms/iteration');
