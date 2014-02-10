@@ -49,7 +49,7 @@ for (var i = 0; i < count; i++) {
         correctPositive++;
     }
     else {
-//        console.log(score, result, text);
+        console.log(score, result, text);
         incorrect++;
     }
 }
