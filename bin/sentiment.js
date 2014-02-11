@@ -39,13 +39,13 @@ for (var i = 0; i < count; i++) {
 
     var result = analyser.classify(text);
     tokens += analyser.glossary.terms;
-    if (result < -0.2 && score < 0) {
+    if (result < -0.1 && score < 0) {
         correctNegative++;
     }
-    else if (result > -0.2 && result < 0.2 && score == 0) {
+    else if (result > -0.1 && result < 0.1 && score == 0) {
         correctNeutral++;
     }
-    else if (result > 0.2 && score > 0) {
+    else if (result > 0.1 && score > 0) {
         correctPositive++;
     }
     else {
