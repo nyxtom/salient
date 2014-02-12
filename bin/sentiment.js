@@ -58,7 +58,7 @@ var seconds = (endTime - startTime) / 1000;
 totalCorrect = correctPositive + correctNegative + correctNeutral;
 var totalProcessed = count - skipped;
 
-console.log('processed', lines.length, 'in', seconds, 'seconds', totalProcessed / seconds, '/second');
+console.log('processed', totalProcessed, 'in', seconds, 'seconds', totalProcessed / seconds, '/second');
 console.log('processed', tokens, 'tokens in', seconds, 'seconds', tokens / seconds, '/ second');
 console.log('correct:', totalCorrect, 'sentences vs incorrect:', incorrect, 'sentences');
 console.log('percent correct', (100.0 * totalCorrect / totalProcessed ), 'percent incorrect', (100.0 * incorrect / totalProcessed));
