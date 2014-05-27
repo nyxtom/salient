@@ -13,3 +13,4 @@ It should be noted that most machine learning algorithms would be better suited 
 
 MIT License
 
+Copyright 2014 Thomas Holloway @nyxtom
