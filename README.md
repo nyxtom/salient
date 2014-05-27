@@ -1,6 +1,34 @@
 # salient
 salient is a natural language processing and machine learning toolkit. Salient contains many common tasks from sentiment analysis, part of speech tagging, tokenization, neural networks, regression analysis, wiktionary parsing, logistic regression, language modeling, mphf, radix trees, vocabulary building and the potential for more awesomeness. It can be used for many classification tasks, categorization, and many common text processing tasks all in node.js :D
 
+```
+npm install salient
+```
+
+### Features
+
+* Sentiment Analysis (includes negation semantics, amplifiers, ironic text)
+* Various Machine Learning Algorithms with regularization, cross validation, learning curves, normalization
+* Neural Networks (Feedforward N-Layers with Y-Units)
+* Logistic Regression
+* Linear Regression
+* Language Modeling (minimal perfect hashing, gaddag, radix trees, tries)
+* Hidden Markov Models
+* Tri-gram HMM Part of Speech Tagger
+* Wiktionary Parsing
+* Tokenization (Tweets, URLS, Word Puncutation, RegExp, Emoticons, Wiki Articles, HTML)
+* Corpus Parsing / Building
+* Brown Corpus Parsing / Analyzer
+* Penn TreeBank Corpus Parsing / Analyzer
+* Twitter TreeBank Corpus Parsing / Analyzer
+* Universal Part of Speech Tagset Mappings
+* Tree Tagger Part of Speech Tagger
+* Text Analyzer (concepts, relations (concept-relationship-concept), filtering, stop-words, tagging)
+* Corpus Coverage Testing
+* Vocabulary Merging
+* Sentiment Terms
+* English Language Modeling
+
 ### Usage
 
 Test cases and usage can be found by looking within the *specs/* directory.
