@@ -21,13 +21,13 @@ npm install salient
 * Brown Corpus Parsing / Analyzer
 * Penn TreeBank Corpus Parsing / Analyzer
 * Twitter TreeBank Corpus Parsing / Analyzer
+* IULA Spanish LSP TreeBank Parsing / Analyzer
 * Universal Part of Speech Tagset Mappings
 * Tree Tagger Part of Speech Tagger
 * Text Analyzer (concepts, relations (concept-relationship-concept), filtering, stop-words, tagging)
 * Corpus Coverage Testing
 * Vocabulary Merging
 * Sentiment Terms
-* English Language Modeling
 
 ### Usage
 
@@ -173,7 +173,7 @@ Since we have 2 different files that represent parts of the same HiddenMarkovMod
 node bin/hmmloader.js model.json model.tagdist.json en.hmm.json
 ```
 
-Testing the accuracy of your model can be done against any of your tree banks sample sets or test sets. It is useful to use this in order to determine the overall precision and accuracy of what you've put together. 
+Testing the accuracy of your model can be done against any of your tree banks sample sets or test sets. It is useful to use this in order to determine the overall precision and accuracy of what you've put together.
 
 ```
 node bin/hmmtest.js en-brown.sentences en.hmm.json --lines=1000 --skip=10000
