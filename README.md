@@ -7,7 +7,7 @@ npm install salient
 
 ### Features
 
-* Sentiment Analysis (includes negation semantics, amplifiers, ironic text)
+* Sentiment Analysis (includes negation semantics, amplifiers, sarcasm detection)
 * Various Machine Learning Algorithms with regularization, cross validation, learning curves, normalization
 * Neural Networks (Feedforward N-Layers with Y-Units)
 * Logistic Regression
