@@ -40,9 +40,14 @@
     "iconv": "~2.0.7",
     "xml-object-stream": "~0.2.0",
     "walk": "~2.2.1",
-    "async": "~0.2.10",
     "burst-trie": "~0.1.0",
-    "judy": "~1.0.2"
+    "judy": "~1.0.2",
+    "robots": "~0.9.4",
+    "request": "latest",
+    "minimist": "latest",
+    "async": "latest",
+    "JSONStream": "latest",
+    "request-progress": "latest"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
