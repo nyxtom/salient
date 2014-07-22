@@ -8,7 +8,7 @@ var salient = require('./../');
 var args = require('minimist')(process.argv);
 if (!args.sitemaps && !args.content && args._.length < 2) {
     console.log('Usage: node crawl.js --sitemaps=true --concurrency=2 --output=tmp.txt http://www.example.com/sitemap.xml');
-    console.log('\t node crawl.js --content=true ./tmp.txt --concurrency=2')
+    console.log('\t node crawl.js --content=true ./tmp.txt --delayms=500')
     return;
 }
 
@@ -17,6 +17,9 @@ if (!args.sitemaps && !args.content && args._.length < 2) {
 var options = {};
 if (args.concurrency) {
     options.concurrency = args.concurrency;
+}
+if (args.delayms) {
+    options.rateLimit = args.delayms;
 }
 
 var crawler = null;
