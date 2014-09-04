@@ -47,7 +47,10 @@
     "minimist": "latest",
     "async": "latest",
     "JSONStream": "latest",
-    "request-progress": "latest"
+    "request-progress": "latest",
+    "csv": "latest",
+    "redis": "latest",
+    "hiredis": "latest"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
