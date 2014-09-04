@@ -10,5 +10,7 @@ if (args.help || args.h || args._.length < 2) {
 
 var g = new salient.glossary.Glossary();
 g.parse(args._.slice(2)[0]);
-var unfiltered = g.unfiltered();
-console.log(unfiltered);
+var items = g.toJSON();
+for (var i = 0; i < items.length; i++) {
+    console.log(items[i], null, 2);
+}
