@@ -78,10 +78,10 @@ else if (args.search) {
         if (args.content) {
             documentGraph.getContents(ids, function (err, results) {
                 for (var i = 0; i < ids.length; i++) {
+                    console.log(clc.bold("-------------------------------------"));
                     console.log(clc.xterm(75).bold(ids[i]), clc.bold(scores[ids[i]]));
                     console.log(clc.bold("-------------------------------------"));
                     console.log(results[i]);
-                    console.log(clc.bold("-------------------------------------"));
                 }
                 process.exit(0);
                 return;
