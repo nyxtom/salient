@@ -11,6 +11,7 @@ if (args.help || args.h || !(args.importcsv || args.tfidf || args.cosine || args
     console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --cosine=concept --docid1='LGN0833' --docid2='LGN0832'");
     console.log("       node graph.js --index=true --docid='LGN0833'");
     console.log(args);
     return;
@@ -64,7 +65,7 @@ else if (args.cosine && args.docid1 && args.docid2) {
 
     documentGraph.indexWeights(id1, function (success) {
         documentGraph.indexWeights(id2, function (success) {
-            documentGraph.CosineSimilarity(id1, id2, function (err, result) {
+            var print = function (err, result) {
                 if (err) {
                     console.log(err);
                 } else {
@@ -72,7 +73,12 @@ else if (args.cosine && args.docid1 && args.docid2) {
                 }
                 process.exit(0);
                 return;
-            });
+            };
+            if (args.cosine == "concept") {
+                documentGraph.CosineConceptSimilarity(id1, id2, print);
+            } else {
+                documentGraph.CosineSimilarity(id1, id2, print);
+            }
         });
     });
 
