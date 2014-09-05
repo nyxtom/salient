@@ -8,7 +8,7 @@ var salient = require('./../');
 var args = require('minimist')(process.argv);
 
 if (args.help || args.h || !(args.importcsv || args.tfidf || args.cosine || args.index)) {
-    console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --docprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
+    console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
     console.log("       node graph.js --index=true --docid='LGN0833'");
@@ -27,8 +27,8 @@ if (args.redisport) {
 if (args.redisdb) {
     options.redisDb = args.redisdb;
 }
-if (args.docprefix) {
-    options.docPrefix = args.docprefix;
+if (args.nsprefix) {
+    options.nsPrefix = args.nsprefix;
 }
 
 var lines = 0;
@@ -62,8 +62,8 @@ else if (args.cosine && args.docid1 && args.docid2) {
     var id1 = args.docid1;
     var id2 = args.docid2;
 
-    documentGraph._indexWeightsById(id1, function (success) {
-        documentGraph._indexWeightsById(id2, function (success) {
+    documentGraph.indexWeights(id1, function (success) {
+        documentGraph.indexWeights(id2, function (success) {
             documentGraph.CosineSimilarity(id1, id2, function (err, result) {
                 if (err) {
                     console.log(err);
@@ -127,7 +127,9 @@ else if (args.importcsv) {
             }
 
             // process the given document text according to the given id/text
-            id = documentGraph._fmt(documentGraph.options.docPrefix, id);
+            if (args.importcsv_idprefix) {
+                id = args.importcsv_idprefix + id;
+            }
             documentGraph.readDocument(id, text);
 
             process.stdout.clearLine();
