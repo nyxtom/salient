@@ -8,15 +8,19 @@ var fs = require('fs'),
 var salient = require('./../');
 var args = require('minimist')(process.argv);
 
-if (args.help || args.h || !(args.search || args.importcsv || args.tfidf || args.cosine || args.index)) {
+function usage() {
     console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 --importlimit=0 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
     console.log("       node graph.js --cosine=concept --docid1='LGN0833' --docid2='LGN0832'");
     console.log("       node graph.js --index=true --docid='LGN0833'");
     console.log("       node graph.js --search=true 'NOUN:louis'");
-    console.log(args);
+    process.exit(0);
     return;
+};
+
+if (args.help || args.h || !(args.search || args.importcsv || args.tfidf || args.cosine || args.index)) {
+    return usage();
 }
 
 // Update options from the command line
@@ -36,6 +40,7 @@ if (args.nsprefix) {
 
 var startTime = new Date().getTime();
 var documentGraph = new salient.graph.DocumentGraph(options);
+var sentimentAnalyser = new salient.sentiment.BayesSentimentAnalyser();
 
 if (args.tfidf) {
     var id = args.docid;
@@ -55,6 +60,21 @@ if (args.tfidf) {
 }
 else if (args.index && args.docid) {
     documentGraph.indexWeights(args.docid, function (success) {
+        process.exit(0);
+        return;
+    });
+}
+else if (args.index) {
+    var startTime = new Date().getTime();
+    documentGraph.indexAllWeights(function (progress) {
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        process.stdout.write(["Indexing", progress.count, "of", progress.total, "documents,", progress.percent, "%"].join(" "));
+    }, function (progress) {
+        var endTime = new Date().getTime();
+        process.stdout.clearLine();
+        process.stdout.cursorTo(0);
+        console.log("Indexed", progress.count, "documents in", (endTime - startTime) / 1000, "seconds");
         process.exit(0);
         return;
     });
@@ -204,4 +224,7 @@ else if (args.importcsv) {
     });
 
     input.pipe(parser);
+}
+else {
+    return usage();
 }
