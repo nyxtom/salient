@@ -72,9 +72,15 @@ else if (args.search) {
         searchTerms = finalArgs[0];
     }
 
+    var startTime = new Date().getTime();
     documentGraph.search(searchTerms.toLowerCase().split(' '), function (err, results) {
-        var ids = results.shift().slice(0, limit);
+        var endTime = new Date().getTime();
+        var diff = (endTime - startTime) / 1000;
+        var ids = results.shift();
         var scores = results.shift();
+        var length = ids.length;
+        ids = ids.slice(0, limit);
+        console.log(clc.green.bold("Search returned:"), ids.length, "of", length, "results in", diff, "seconds");
         if (args.content) {
             documentGraph.getContents(ids, function (err, results) {
                 for (var i = 0; i < ids.length; i++) {
