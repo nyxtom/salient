@@ -1,15 +1,17 @@
 
 var fs = require('fs'),
     csv = require('csv'),
-    transform = require('stream-transform'),
     redis = require('redis'),
     async = require('async');
 
 var salient = require('./../');
 var args = require('minimist')(process.argv);
 
-if (args.help || args.h || (args._.length <= 2 && !args.importcsv)) {
-    console.log("Usage: node graph.js --redishost='localhost' --redisport=1337 --redisdb=0 --docprefix='doc' --importcsv --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
+if (args.help || args.h || !(args.importcsv || args.tfidf || args.cosine)) {
+    console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --docprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
+    console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
+    console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
+    console.log(args);
     return;
 }
 
@@ -32,8 +34,42 @@ var lines = 0;
 var skipLines = args.importskip || 1;
 var startTime = new Date().getTime();
 var documentGraph = new salient.graph.DocumentGraph(options);
-if (args.importcsv) {
-    var input = fs.createReadStream(args._.slice(2)[0]);
+
+if (args.tfidf) {
+    var id = args.docid;
+    var key = "";
+    var finalArgs = args._.slice(2);
+    if (finalArgs.length == 0 && typeof args.tfidf == 'string') {
+        key = args.tfidf;
+    } else if (finalArgs.length > 0) {
+        key = finalArgs[0];
+    }
+
+    documentGraph.TFIDF(id, key, function (err, result) {
+        console.log(result);
+        process.exit(0);
+        return;
+    });
+}
+else if (args.cosine && args.docid1 && args.docid2) {
+    var id1 = args.docid1;
+    var id2 = args.docid2;
+}
+else if (args.importcsv) {
+    var finalArgs = args._.slice(2);
+    var inputFile = "";
+    if (finalArgs.length == 0 && typeof args.importcsv == 'string') {
+        inputFile = args.importcsv;
+    } else if (finalArgs.length > 0) {
+        inputFile = finalArgs[0];
+    }
+    if (inputFile.length == 0) {
+        console.log("error: invalid input file specified");
+        process.exit(0);
+        return;
+    }
+
+    var input = fs.createReadStream(inputFile);
 
     var parser = csv.parse();
     parser.on('readable', function () {
