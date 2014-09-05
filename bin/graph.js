@@ -7,10 +7,11 @@ var fs = require('fs'),
 var salient = require('./../');
 var args = require('minimist')(process.argv);
 
-if (args.help || args.h || !(args.importcsv || args.tfidf || args.cosine)) {
+if (args.help || args.h || !(args.importcsv || args.tfidf || args.cosine || args.index)) {
     console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --docprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --index=true --docid='LGN0833'");
     console.log(args);
     return;
 }
@@ -51,9 +52,30 @@ if (args.tfidf) {
         return;
     });
 }
+else if (args.index && args.docid) {
+    documentGraph._indexWeightsById(args.docid, function (success) {
+        process.exit(0);
+        return;
+    });
+}
 else if (args.cosine && args.docid1 && args.docid2) {
     var id1 = args.docid1;
     var id2 = args.docid2;
+
+    documentGraph._indexWeightsById(id1, function (success) {
+        documentGraph._indexWeightsById(id2, function (success) {
+            documentGraph.CosineSimilarity(id1, id2, function (err, result) {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(result);
+                }
+                process.exit(0);
+                return;
+            });
+        });
+    });
+
 }
 else if (args.importcsv) {
     var finalArgs = args._.slice(2);
@@ -105,6 +127,7 @@ else if (args.importcsv) {
             }
 
             // process the given document text according to the given id/text
+            id = documentGraph._fmt(documentGraph.options.docPrefix, id);
             documentGraph.readDocument(id, text);
 
             process.stdout.clearLine();
