@@ -93,6 +93,8 @@ else if (args.search) {
     }
 
     var startTime = new Date().getTime();
+    var searchOptions = {};
+    searchOptions.searchLimit = limit;
     documentGraph.search(searchTerms.toLowerCase().split(' '), function (err, results) {
         var endTime = new Date().getTime();
         var diff = (endTime - startTime) / 1000;
@@ -119,7 +121,7 @@ else if (args.search) {
             process.exit(0);
             return;
         }
-    }, args.hasOwnProperty('content'));
+    }, searchOptions);
 }
 else if (args.cosine && args.docid1 && args.docid2) {
     var id1 = args.docid1;
