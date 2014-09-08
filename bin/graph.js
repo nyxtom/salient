@@ -11,16 +11,16 @@ var args = require('minimist')(process.argv);
 function usage() {
     console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 --importlimit=0 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
-    console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
-    console.log("       node graph.js --cosine=doc_concepts --docid1='LGN0833' --docid2='LGN0832'");
-    console.log("       node graph.js --cosine=terms --docid1='noun:bike' --docid2='noun:helmet'");
+    console.log("       node graph.js --compare --sim=cosine --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --compare=doc_concepts --sim=cosine --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --compare=terms --sim=cosine --docid1='noun:bike' --docid2='noun:helmet'");
     console.log("       node graph.js --index=true --docid='LGN0833'");
     console.log("       node graph.js --search=true 'NOUN:louis'");
     process.exit(0);
     return;
 };
 
-if (args.help || args.h || !(args.search || args.importcsv || args.tfidf || args.cosine || args.index)) {
+if (args.help || args.h || !(args.search || args.importcsv || args.tfidf || args.compare || args.index)) {
     return usage();
 }
 
@@ -124,7 +124,7 @@ else if (args.search) {
         }
     }, searchOptions);
 }
-else if (args.cosine && args.docid1 && args.docid2) {
+else if (args.compare && args.docid1 && args.docid2) {
     var id1 = args.docid1;
     var id2 = args.docid2;
 
@@ -137,10 +137,10 @@ else if (args.cosine && args.docid1 && args.docid2) {
         process.exit(0);
         return;
     };
-    if (args.cosine == "terms") {
+    if (args.compare == "terms") {
         documentGraph.CosineContextSimilarity(id1, id2, print);
     }
-    else if (args.cosine == "doc_concepts") {
+    else if (args.compare == "doc_concepts") {
         documentGraph.CosineConceptSimilarity(id1, id2, print);
     } else {
         documentGraph.CosineSimilarity(id1, id2, print);
