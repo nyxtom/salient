@@ -12,7 +12,8 @@ function usage() {
     console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 --importlimit=0 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --cosine=true --docid1='LGN0833' --docid2='LGN0832'");
-    console.log("       node graph.js --cosine=concept --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --cosine=doc_concepts --docid1='LGN0833' --docid2='LGN0832'");
+    console.log("       node graph.js --cosine=terms --docid1='noun:bike' --docid2='noun:helmet'");
     console.log("       node graph.js --index=true --docid='LGN0833'");
     console.log("       node graph.js --search=true 'NOUN:louis'");
     process.exit(0);
@@ -127,25 +128,23 @@ else if (args.cosine && args.docid1 && args.docid2) {
     var id1 = args.docid1;
     var id2 = args.docid2;
 
-    documentGraph.indexWeights(id1, function (success) {
-        documentGraph.indexWeights(id2, function (success) {
-            var print = function (err, result) {
-                if (err) {
-                    console.log(err);
-                } else {
-                    console.log(result);
-                }
-                process.exit(0);
-                return;
-            };
-            if (args.cosine == "concept") {
-                documentGraph.CosineConceptSimilarity(id1, id2, print);
-            } else {
-                documentGraph.CosineSimilarity(id1, id2, print);
-            }
-        });
-    });
-
+    var print = function (err, result) {
+        if (err) {
+            console.log(err);
+        } else {
+            console.log(result);
+        }
+        process.exit(0);
+        return;
+    };
+    if (args.cosine == "terms") {
+        documentGraph.CosineContextSimilarity(id1, id2, print);
+    }
+    else if (args.cosine == "doc_concepts") {
+        documentGraph.CosineConceptSimilarity(id1, id2, print);
+    } else {
+        documentGraph.CosineSimilarity(id1, id2, print);
+    }
 }
 else if (args.importcsv) {
     var finalArgs = args._.slice(2);
