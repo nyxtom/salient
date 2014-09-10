@@ -3,13 +3,17 @@ var fs = require('fs'),
     csv = require('csv'),
     redis = require('redis'),
     async = require('async'),
-    clc = require('cli-color');
+    clc = require('cli-color'),
+    os = require('os'),
+    cluster = require('cluster'),
+    spin = require('term-spinner');
 
 var salient = require('./../');
+
 var args = require('minimist')(process.argv);
 
 function usage() {
-    console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_idprefix='doc' --importcsv_id=3 --importcsv_text=-1 --importskip=1 --importlimit=0 ./products.csv");
+    console.log("Usage: node graph.js --importcsv=true --redishost='localhost' --redisport=1337 --redisdb=0 --importcsv_id=3 --importcsv_title=2 --importcsv_text=-1 --importcsv_link=1 --importcsv_idprefix='doc' --importskip=1 --importlimit=0 ./products.csv");
     console.log("       node graph.js --tfidf=true --docid='LGN0833' 'NOUN:engineers'");
     console.log("       node graph.js --compare --sim=cosine --docid1='LGN0833' --docid2='LGN0832'");
     console.log("       node graph.js --compare=doc_concepts --sim=cosine --docid1='LGN0833' --docid2='LGN0832'");
@@ -35,13 +39,14 @@ if (args.redisport) {
 if (args.redisdb) {
     options.redisDb = args.redisdb;
 }
+if (args.rediscluster) {
+    options.redisCluster = args.rediscluster;
+}
 if (args.nsprefix) {
     options.nsPrefix = args.nsprefix;
 }
 
 var startTime = new Date().getTime();
-var documentGraph = new salient.graph.DocumentGraph(options);
-var sentimentAnalyser = new salient.sentiment.BayesSentimentAnalyser();
 
 if (args.tfidf) {
     var id = args.docid;
@@ -53,6 +58,7 @@ if (args.tfidf) {
         key = finalArgs[0];
     }
 
+    var documentGraph = new salient.graph.DocumentGraph(options);
     documentGraph.TFIDF(id, key, function (err, result) {
         console.log(result);
         process.exit(0);
@@ -60,6 +66,7 @@ if (args.tfidf) {
     });
 }
 else if (args.index && args.docid) {
+    var documentGraph = new salient.graph.DocumentGraph(options);
     documentGraph.indexWeights(args.docid, function (success) {
         process.exit(0);
         return;
@@ -67,18 +74,37 @@ else if (args.index && args.docid) {
 }
 else if (args.index) {
     var startTime = new Date().getTime();
-    documentGraph.indexAllWeights(function (progress) {
+    var threshold = 0.08;
+    if (args.doc_threshold) {
+        threshold = args.threshold;
+    }
+
+    var spinner = spin.new(spin.types.Box1);
+    var interval = setInterval(function () {
+        spinner.next();
+    }, 1000);
+
+    var progressPrint = function (progress) {
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-        process.stdout.write(["Indexing", progress.count, "of", progress.total, "documents,", progress.percent, "%"].join(" "));
-    }, function (progress) {
+        process.stdout.write([spinner.current, "Indexing", progress.count, "of", progress.total, progress.percent, "%"].join(" "));
+    };
+    var progressComplete = function (progress) {
         var endTime = new Date().getTime();
         process.stdout.clearLine();
         process.stdout.cursorTo(0);
-        console.log("Indexed", progress.count, "documents in", (endTime - startTime) / 1000, "seconds");
+        clearInterval(interval);
+        console.log("Indexed", progress.count, "in", (endTime - startTime) / 1000, "seconds");
         process.exit(0);
         return;
-    });
+    };
+
+    var documentGraph = new salient.graph.DocumentGraph(options);
+    if (args.index == "doc_similar") {
+        documentGraph.indexSimilarDocuments(threshold, progressPrint, progressComplete);
+    } else {
+        documentGraph.indexAllWeights(progressPrint, progressComplete);
+    }
 }
 else if (args.search) {
     var searchTerms = "";
@@ -96,21 +122,36 @@ else if (args.search) {
     var startTime = new Date().getTime();
     var searchOptions = {};
     searchOptions.searchLimit = limit;
+    var documentGraph = new salient.graph.DocumentGraph(options);
     documentGraph.search(searchTerms.toLowerCase().split(' '), function (err, results) {
         var endTime = new Date().getTime();
         var diff = (endTime - startTime) / 1000;
         var ids = results.shift();
         var scores = results.shift();
-        var length = ids.length;
+        var count = results.shift();
         ids = ids.slice(0, limit);
-        console.log(clc.green.bold("Search returned:"), ids.length, "of", length, "results in", diff, "seconds");
+        console.log(clc.green.bold("Search returned:"), ids.length, "of", count, "results in", diff, "seconds");
         if (args.content) {
             documentGraph.getContents(ids, function (err, results) {
-                for (var i = 0; i < ids.length; i++) {
+                var iter = 0;
+                while (results && results.length) {
+                    var content = results.shift();
+                    var title = results.shift();
+                    var link = results.shift();
                     console.log(clc.bold("-------------------------------------"));
-                    console.log(clc.xterm(75).bold(ids[i]), clc.bold(scores[ids[i]]));
+                    if (title) {
+                        console.log(clc.xterm(75).bold(title), clc.bold(scores[ids[iter]]), clc.xterm(100).bold('(id: ' + ids[iter] + ')'));
+                    } else {
+                        console.log(clc.xterm(75).bold(ids[iter]), clc.bold(scores[ids[iter]]), clc.xterm(100).bold('(id: ' + ids[iter] + ')'));
+                    }
                     console.log(clc.bold("-------------------------------------"));
-                    console.log(results[i]);
+                    if (link) {
+                        console.log(clc.xterm(75).bold(link));
+                    } else {
+                        console.log(clc.bold(ids[iter]));
+                    }
+                    console.log(content);
+                    iter++;
                 }
                 process.exit(0);
                 return;
@@ -137,6 +178,7 @@ else if (args.compare && args.docid1 && args.docid2) {
         process.exit(0);
         return;
     };
+    var documentGraph = new salient.graph.DocumentGraph(options);
     if (args.compare == "terms") {
         documentGraph.CosineContextSimilarity(id1, id2, print);
     }
@@ -160,71 +202,183 @@ else if (args.importcsv) {
         return;
     }
 
-    var input = fs.createReadStream(inputFile);
+    if (cluster.isMaster) {
+        var workerState = {};
 
-    var lines = 0;
-    var skipLines = args.importskip || 1;
-    var limitLines = args.importlimit || 0;
-    var maxLine = skipLines + limitLines;
-    var parser = csv.parse();
-    parser.on('readable', function () {
-        while (data = parser.read()) {
-            lines++;
-            if (lines <= skipLines) {
-                continue;
-            }
-            if (limitLines > 0 && maxLine <= lines) {
-                parser.emit('end');
-                break;
-            }
-            var id = lines;
-            var text = data[data.length - 1].trim();
-            if (args.importcsv_id) {
-                if (Math.abs(args.importcsv_id) < data.length) {
-                    if (args.importcsv_id < 0) {
-                        id = data[data.length + args.importcsv_id];
-                    } else {
-                        id = data[args.importcsv_id];
-                    }
-                }
-            }
-
-            if (args.importcsv_text) {
-                if (Math.abs(args.importcsv_text) < data.length) {
-                    if (args.importcsv_text < 0) {
-                        text = data[data.length + args.importcsv_text];
-                    } else {
-                        id = data[args.importcsv_text];
-                    }
-                }
-            }
-
-            if (text.length == 0) {
-                return;
-            }
-
-            // process the given document text according to the given id/text
-            if (args.importcsv_idprefix) {
-                id = args.importcsv_idprefix + id;
-            }
-            documentGraph.readDocument(id, text);
-
+        var spinner = spin.new(spin.types.Box2);
+        var updateState = function () {
+            spinner.next();
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-            process.stdout.write("Processed " + (lines - skipLines) + " lines...");
+
+            //process.stdout.write(args);
+            var totalLines = 0;
+            var totalSpeed = 0;
+            var totalWorkers = 0;
+            for (var w in workerState) {
+                if (workerState[w]) {
+                    totalWorkers++;
+                    totalLines += workerState[w].lines;
+                    totalSpeed += workerState[w].speed;
+                }
+            }
+
+            var prefix = clc.xterm(85).bold(spinner.current + " Processed ");
+            var linePrefix = totalLines + " lines from ";
+            var workerPrefix = clc.xterm(120).bold(totalWorkers + " workers ");
+            var speedPrefix = "@ " + clc.xterm(40).bold(totalSpeed.toFixed(2) + "/sec");
+            process.stdout.write(prefix + linePrefix + workerPrefix + speedPrefix);
+        };
+
+        setInterval(updateState, 1000);
+
+        var numWorkers = os.cpus().length;
+        if (typeof args.cluster == 'number') {
+            numWorkers = args.cluster;
+        } else if (!args.cluster) {
+            numWorkers = 1;
         }
-    });
+        for (var i = 0; i < numWorkers; i++) {
+            var worker = cluster.fork();
+            worker.on('message', function (msg) {
+                workerState[this.id] = msg;
+            });
+        }
 
-    parser.on('end', function () {
-        var endTime = new Date().getTime();
-        var diff = (endTime - startTime) / 1000.0;
-        process.stdout.clearLine();
-        process.stdout.cursorTo(0);
-        console.log('Processed ' + (lines - skipLines) + ' lines in ' + diff + ' seconds');
-        process.exit(0);
-    });
+        cluster.on('death', function (worker) {
+            console.log('worker ' + worker.pid + ' died');
+        });
 
-    input.pipe(parser);
+    } else {
+        var affinity = 0;
+        if (cluster.worker) {
+            affinity = cluster.worker.id;
+        }
+        var input = fs.createReadStream(inputFile);
+
+        var lines = 0;
+        var readLines = 0;
+        var skipLines = args.importskip || 1;
+        var limitLines = args.importlimit || 0;
+        var maxLine = skipLines + limitLines;
+        var parser = csv.parse();
+        var time = new Date().getTime();
+        var iterCount = 0;
+        var speed = 0;
+        var documentGraph = new salient.graph.DocumentGraph(options);
+        parser.on('readable', function () {
+            while (data = parser.read()) {
+                lines++;
+                if (cluster.worker && lines % affinity != 0) {
+                    continue;
+                }
+
+                readLines++;
+                if (readLines <= skipLines) {
+                    continue;
+                }
+                if (limitLines > 0 && maxLine <= readLines) {
+                    parser.emit('end');
+                    break;
+                }
+                var id = lines;
+                var text = data[data.length - 1].trim();
+                var title = "";
+                var link = "";
+                if (args.importcsv_id) {
+                    if (Math.abs(args.importcsv_id) < data.length) {
+                        if (args.importcsv_id < 0) {
+                            id = data[data.length + args.importcsv_id];
+                        } else {
+                            id = data[args.importcsv_id];
+                        }
+                    }
+                }
+
+                if (args.importcsv_text) {
+                    if (Math.abs(args.importcsv_text) < data.length) {
+                        if (args.importcsv_text < 0) {
+                            text = data[data.length + args.importcsv_text];
+                        } else {
+                            id = data[args.importcsv_text];
+                        }
+                    }
+                }
+
+                if (args.importcsv_title) {
+                    if (Math.abs(args.importcsv_title) < data.length) {
+                        if (args.importcsv_title < 0) {
+                            title = data[data.length + args.importcsv_title];
+                        } else {
+                            title = data[args.importcsv_title];
+                        }
+                    }
+                }
+
+                if (args.importcsv_link) {
+                    if (Math.abs(args.importcsv_link) < data.length) {
+                        if (args.importcsv_link < 0) {
+                            link = data[data.length + args.importcsv_link];
+                        } else {
+                            link = data[args.importcsv_link];
+                        }
+                    }
+                }
+
+                var categories = [];
+                if (args.importcsv_categories) {
+                    var cats = args.importcsv_categories.toString().split(',');
+                    for (var i = 0; i < cats.length; i++) {
+                        var cat = parseInt(cats[i]);
+                        if (cat < 0) {
+                            categories.push(data[data.length + cat]);
+                        } else {
+                            categories.push(data[cat]);
+                        }
+                    }
+                }
+
+                text = text.trim();
+                if (text.length == 0 && title.length == 0) {
+                    return;
+                }
+
+                // process the given document text according to the given id/text
+                if (args.importcsv_idprefix) {
+                    id = args.importcsv_idprefix + id;
+                }
+                documentGraph.readDocument(id, text, title, link, categories);
+
+                //process.stdout.clearLine();
+                //process.stdout.cursorTo(0);
+                var newTime = new Date().getTime();
+                iterCount++;
+                if ((newTime - time) > 1000) {
+                    speed = Math.round(100 * (iterCount / ((newTime - time) / 1000))) / 100;
+                    iterCount = 0;
+                    time = newTime;
+                }
+
+                data = null;
+                text = null;
+                title = null;
+                link = null;
+                categories = null;
+                id = null;
+                //process.send(clc.xterm(150).bold(spinner.current + " [" + cluster.worker.process.pid + "] Processed ") + (readLines - skipLines) + " lines @ " + clc.xterm(85).bold((speed) + "/sec"));
+                process.send({ 'speed': speed, 'lines': readLines - skipLines });
+            }
+        });
+
+        parser.on('end', function () {
+            var endTime = new Date().getTime();
+            var diff = (endTime - startTime) / 1000.0;
+            process.send('[ ' + cluster.worker.process.pid + '] Processed ' + (readLines - skipLines) + ' lines in ' + diff + ' seconds');
+            process.exit(0);
+        });
+
+        input.pipe(parser);
+    }
 }
 else {
     return usage();
