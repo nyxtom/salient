@@ -51,7 +51,9 @@
     "csv": "latest",
     "redis": "latest",
     "hiredis": "latest",
-    "cli-color": "latest"
+    "cli-color": "latest",
+    "node-redis-cluster": "nyxtom/redis-cluster",
+    "term-spinner": "nyxtom/node-term-spinner"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
