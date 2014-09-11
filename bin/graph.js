@@ -1,6 +1,6 @@
 
 var fs = require('fs'),
-    csv = require('csv'),
+    readline = require('readline'),
     redis = require('redis'),
     async = require('async'),
     clc = require('cli-color'),
@@ -208,6 +208,12 @@ else if (args.importcsv) {
         return;
     }
 
+    var numWorkers = os.cpus().length;
+    if (typeof args.cluster == 'number') {
+        numWorkers = args.cluster;
+    } else if (!args.cluster) {
+        numWorkers = 1;
+    }
     if (cluster.isMaster) {
         var workerState = {};
         var totalLines = 0;
@@ -222,6 +228,7 @@ else if (args.importcsv) {
             //process.stdout.write(args);
             var totalSpeed = 0;
             var totalWorkers = 0;
+            totalLines = 0;
             for (var w in workerState) {
                 if (workerState[w]) {
                     totalWorkers++;
@@ -239,12 +246,6 @@ else if (args.importcsv) {
 
         var interval = setInterval(updateState, 1000);
 
-        var numWorkers = os.cpus().length;
-        if (typeof args.cluster == 'number') {
-            numWorkers = args.cluster;
-        } else if (!args.cluster) {
-            numWorkers = 1;
-        }
         var workers = {};
         var totalWorkers = numWorkers;
         for (var i = 0; i < numWorkers; i++) {
@@ -272,128 +273,148 @@ else if (args.importcsv) {
         if (cluster.worker) {
             affinity = cluster.worker.id;
         }
-        var input = fs.createReadStream(inputFile);
 
         var lines = 0;
         var readLines = 0;
+        var nextLine = affinity;
         var skipLines = args.importskip || 1;
         var limitLines = args.importlimit || 0;
         var maxLine = skipLines + limitLines;
-        var parser = csv.parse();
         var time = new Date().getTime();
         var iterCount = 0;
         var speed = 0;
         var documentGraph = new salient.graph.DocumentGraph(options);
-        parser.on('readable', function () {
-            while (data = parser.read()) {
+        var inputStream = fs.createReadStream(inputFile);
+        var reader = readline.createInterface({ input: inputStream, terminal: false });
+        var columns = 0;
+        reader.on('line', function (line) {
+            if (lines == 0) {
+                columns = line.split(',');
                 lines++;
-                if (cluster.worker && lines % affinity != 0) {
-                    continue;
-                }
-
-                readLines++;
-                if (readLines <= skipLines) {
-                    continue;
-                }
-                if (limitLines > 0 && maxLine <= readLines) {
-                    parser.emit('end');
-                    break;
-                }
-                var id = lines;
-                var text = data[data.length - 1].trim();
-                var title = "";
-                var link = "";
-                if (args.importcsv_id) {
-                    if (Math.abs(args.importcsv_id) < data.length) {
-                        if (args.importcsv_id < 0) {
-                            id = data[data.length + args.importcsv_id];
-                        } else {
-                            id = data[args.importcsv_id];
-                        }
-                    }
-                }
-
-                if (args.importcsv_text) {
-                    if (Math.abs(args.importcsv_text) < data.length) {
-                        if (args.importcsv_text < 0) {
-                            text = data[data.length + args.importcsv_text];
-                        } else {
-                            id = data[args.importcsv_text];
-                        }
-                    }
-                }
-
-                if (args.importcsv_title) {
-                    if (Math.abs(args.importcsv_title) < data.length) {
-                        if (args.importcsv_title < 0) {
-                            title = data[data.length + args.importcsv_title];
-                        } else {
-                            title = data[args.importcsv_title];
-                        }
-                    }
-                }
-
-                if (args.importcsv_link) {
-                    if (Math.abs(args.importcsv_link) < data.length) {
-                        if (args.importcsv_link < 0) {
-                            link = data[data.length + args.importcsv_link];
-                        } else {
-                            link = data[args.importcsv_link];
-                        }
-                    }
-                }
-
-                var categories = [];
-                if (args.importcsv_categories) {
-                    var cats = args.importcsv_categories.toString().split(',');
-                    for (var i = 0; i < cats.length; i++) {
-                        var cat = parseInt(cats[i]);
-                        if (cat < 0) {
-                            categories.push(data[data.length + cat]);
-                        } else {
-                            categories.push(data[cat]);
-                        }
-                    }
-                }
-
-                text = text.trim();
-                if (text.length == 0 && title.length == 0) {
-                    return;
-                }
-
-                // process the given document text according to the given id/text
-                if (args.importcsv_idprefix) {
-                    id = args.importcsv_idprefix + id;
-                }
-                documentGraph.readDocument(id, text, title, link, categories);
-
-                //process.stdout.clearLine();
-                //process.stdout.cursorTo(0);
-                var newTime = new Date().getTime();
-                iterCount++;
-                if ((newTime - time) > 1000) {
-                    speed = Math.round(100 * (iterCount / ((newTime - time) / 1000))) / 100;
-                    iterCount = 0;
-                    time = newTime;
-                }
-
-                data = null;
-                text = null;
-                title = null;
-                link = null;
-                categories = null;
-                id = null;
-                //process.send(clc.xterm(150).bold(spinner.current + " [" + cluster.worker.process.pid + "] Processed ") + (readLines - skipLines) + " lines @ " + clc.xterm(85).bold((speed) + "/sec"));
-                process.send({ 'speed': speed, 'lines': readLines - skipLines });
+                return;
             }
+
+            // next line to read = lines + affinity
+            if (cluster.worker && lines != nextLine) {
+                lines++;
+                return;
+            }
+
+            lines++;
+            readLines++;
+            nextLine = lines + (affinity + numWorkers);
+            if (readLines <= skipLines) {
+                return;
+            }
+            if (limitLines > 0 && maxLine <= readLines) {
+                parser.emit('end');
+                return;
+            }
+
+            var data = [];
+            var index = -1;
+            for (var i = 0; i < columns; i++) {
+                var prevIndex = index + 1;
+                index = line.indexOf(',', index+1);
+                data.push(line.substring(prevIndex, index));
+            }
+            data.push(line.substring(index+1, line.length));
+
+            var id = lines;
+            var text = data[data.length - 1].trim();
+            if (text.length > 0 && text[0] == '\"' && text[1] == '\"') {
+                text = text.substring(1, text.length-1).trim();
+            }
+
+            var title = "";
+            var link = "";
+            if (args.importcsv_id) {
+                if (Math.abs(args.importcsv_id) < data.length) {
+                    if (args.importcsv_id < 0) {
+                        id = data[data.length + args.importcsv_id];
+                    } else {
+                        id = data[args.importcsv_id];
+                    }
+                }
+            }
+
+            if (args.importcsv_text) {
+                if (Math.abs(args.importcsv_text) < data.length) {
+                    if (args.importcsv_text < 0) {
+                        text = data[data.length + args.importcsv_text];
+                    } else {
+                        id = data[args.importcsv_text];
+                    }
+                }
+            }
+
+            if (args.importcsv_title) {
+                if (Math.abs(args.importcsv_title) < data.length) {
+                    if (args.importcsv_title < 0) {
+                        title = data[data.length + args.importcsv_title].trim();
+                    } else {
+                        title = data[args.importcsv_title].trim();
+                    }
+                }
+            }
+
+            if (args.importcsv_link) {
+                if (Math.abs(args.importcsv_link) < data.length) {
+                    if (args.importcsv_link < 0) {
+                        link = data[data.length + args.importcsv_link];
+                    } else {
+                        link = data[args.importcsv_link];
+                    }
+                }
+            }
+
+            var categories = [];
+            if (args.importcsv_categories) {
+                var cats = args.importcsv_categories.toString().split(',');
+                for (var i = 0; i < cats.length; i++) {
+                    var cat = parseInt(cats[i]);
+                    if (cat < 0) {
+                        categories.push(data[data.length + cat]);
+                    } else {
+                        categories.push(data[cat]);
+                    }
+                }
+            }
+
+            if (text.length == 0 && title.length == 0) {
+                return;
+            }
+
+            // process the given document text according to the given id/text
+            if (args.importcsv_idprefix) {
+                id = args.importcsv_idprefix + id;
+            }
+            documentGraph.readDocument(id, text, title, link, categories);
+
+            //process.stdout.clearLine();
+            //process.stdout.cursorTo(0);
+            var newTime = new Date().getTime();
+            iterCount++;
+            if ((newTime - time) > 1000) {
+                speed = Math.round(100 * (iterCount / ((newTime - time) / 1000))) / 100;
+                iterCount = 0;
+                time = newTime;
+            }
+
+            data = null;
+            text = null;
+            title = null;
+            link = null;
+            categories = null;
+            id = null;
+            //process.send(clc.xterm(150).bold(spinner.current + " [" + cluster.worker.process.pid + "] Processed ") + (readLines - skipLines) + " lines @ " + clc.xterm(85).bold((speed) + "/sec"));
+            process.send({ 'speed': speed, 'lines': readLines - skipLines });
         });
 
-        parser.on('end', function () {
+        reader.on('close', function () {
             process.send({ 'speed': speed, 'lines': readLines - skipLines });
             process.exit(0);
         });
-
-        input.pipe(parser);
     }
 }
 else {
