@@ -137,7 +137,7 @@ else if (args.search) {
         }
 
         console.log(clc.green.bold("Search returned:"), ids.length, "of", count, "results in", diff, "seconds");
-        if (results && results.length > 0 && args.content) {
+        if (count > 0 && args.content) {
             documentGraph.getContents(ids, function (err, results) {
                 var iter = 0;
                 while (results && results.length) {
@@ -210,7 +210,9 @@ else if (args.importcsv) {
 
     if (cluster.isMaster) {
         var workerState = {};
+        var totalLines = 0;
 
+        var startTime = new Date().getTime();
         var spinner = spin.new(spin.types.Box2);
         var updateState = function () {
             spinner.next();
@@ -218,7 +220,6 @@ else if (args.importcsv) {
             process.stdout.cursorTo(0);
 
             //process.stdout.write(args);
-            var totalLines = 0;
             var totalSpeed = 0;
             var totalWorkers = 0;
             for (var w in workerState) {
@@ -236,7 +237,7 @@ else if (args.importcsv) {
             process.stdout.write(prefix + linePrefix + workerPrefix + speedPrefix);
         };
 
-        setInterval(updateState, 1000);
+        var interval = setInterval(updateState, 1000);
 
         var numWorkers = os.cpus().length;
         if (typeof args.cluster == 'number') {
@@ -244,17 +245,28 @@ else if (args.importcsv) {
         } else if (!args.cluster) {
             numWorkers = 1;
         }
+        var workers = {};
+        var totalWorkers = numWorkers;
         for (var i = 0; i < numWorkers; i++) {
             var worker = cluster.fork();
+            workers[worker.id] = worker;
             worker.on('message', function (msg) {
                 workerState[this.id] = msg;
             });
         }
 
-        cluster.on('death', function (worker) {
-            console.log('worker ' + worker.pid + ' died');
+        cluster.on('exit', function (worker, code, signal) {
+            if (workers.hasOwnProperty(worker.id)) {
+                delete workers[worker.id];
+                numWorkers--;
+            }
+            if (numWorkers == 0) {
+                var endTime = new Date().getTime();
+                var diff = (endTime - startTime) / 1000.0;
+                process.stdout.write('Processed ' + totalLines + ' lines in ' + diff.toFixed(2) + ' seconds');
+                process.exit(0);
+            }
         });
-
     } else {
         var affinity = 0;
         if (cluster.worker) {
@@ -377,9 +389,7 @@ else if (args.importcsv) {
         });
 
         parser.on('end', function () {
-            var endTime = new Date().getTime();
-            var diff = (endTime - startTime) / 1000.0;
-            process.send('[ ' + cluster.worker.process.pid + '] Processed ' + (readLines - skipLines) + ' lines in ' + diff + ' seconds');
+            process.send({ 'speed': speed, 'lines': readLines - skipLines });
             process.exit(0);
         });
 
