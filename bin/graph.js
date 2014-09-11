@@ -126,12 +126,18 @@ else if (args.search) {
     documentGraph.search(searchTerms.toLowerCase().split(' '), function (err, results) {
         var endTime = new Date().getTime();
         var diff = (endTime - startTime) / 1000;
-        var ids = results.shift();
-        var scores = results.shift();
-        var count = results.shift();
-        ids = ids.slice(0, limit);
+        var ids = [];
+        var scores = [];
+        var count = 0;
+        if (results && results.length > 0) {
+            ids = results.shift();
+            scores = results.shift();
+            count = results.shift();
+            ids = ids.slice(0, limit);
+        }
+
         console.log(clc.green.bold("Search returned:"), ids.length, "of", count, "results in", diff, "seconds");
-        if (args.content) {
+        if (results && results.length > 0 && args.content) {
             documentGraph.getContents(ids, function (err, results) {
                 var iter = 0;
                 while (results && results.length) {
