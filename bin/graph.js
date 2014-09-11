@@ -215,6 +215,8 @@ else if (args.importcsv) {
         numWorkers = 1;
     }
     if (cluster.isMaster) {
+        var totalWorkers = numWorkers;
+        var totalSpeed = 0;
         var workerState = {};
         var totalLines = 0;
 
@@ -222,21 +224,10 @@ else if (args.importcsv) {
         var spinner = spin.new(spin.types.Box2);
         var updateState = function () {
             spinner.next();
+            updateTotals();
+
             process.stdout.clearLine();
             process.stdout.cursorTo(0);
-
-            //process.stdout.write(args);
-            var totalSpeed = 0;
-            var totalWorkers = 0;
-            totalLines = 0;
-            for (var w in workerState) {
-                if (workerState[w]) {
-                    totalWorkers++;
-                    totalLines += workerState[w].lines;
-                    totalSpeed += workerState[w].speed;
-                }
-            }
-
             var prefix = clc.xterm(85).bold(spinner.current + " Processed ");
             var linePrefix = totalLines + " lines from ";
             var workerPrefix = clc.xterm(120).bold(totalWorkers + " workers ");
@@ -244,10 +235,21 @@ else if (args.importcsv) {
             process.stdout.write(prefix + linePrefix + workerPrefix + speedPrefix);
         };
 
-        var interval = setInterval(updateState, 1000);
+        var updateTotals = function () {
+            var _totalSpeed = 0;
+            var _totalLines = 0;
+            for (var w in workerState) {
+                if (workerState[w]) {
+                    _totalLines += workerState[w].lines;
+                    _totalSpeed += workerState[w].speed;
+                }
+            }
+            totalSpeed = _totalSpeed;
+            totalLines = _totalLines;
+        };
 
+        var interval = setInterval(updateState, 1000);
         var workers = {};
-        var totalWorkers = numWorkers;
         for (var i = 0; i < numWorkers; i++) {
             var worker = cluster.fork();
             workers[worker.id] = worker;
@@ -262,10 +264,17 @@ else if (args.importcsv) {
                 numWorkers--;
             }
             if (numWorkers == 0) {
+                updateTotals();
                 var endTime = new Date().getTime();
                 var diff = (endTime - startTime) / 1000.0;
-                process.stdout.write('Processed ' + totalLines + ' lines in ' + diff.toFixed(2) + ' seconds');
+                process.stdout.clearLine();
+                process.stdout.cursorTo(0);
+                var prefix = clc.xterm(85).bold("✓ Processed ");
+                var linePrefix = totalLines + " lines in ";
+                var time = clc.xterm(40).bold(diff.toFixed(2) + " seconds\r\n");
+                process.stdout.write(prefix + linePrefix + time);
                 process.exit(0);
+                return;
             }
         });
     } else {
@@ -277,7 +286,7 @@ else if (args.importcsv) {
         var lines = 0;
         var readLines = 0;
         var nextLine = affinity;
-        var skipLines = args.importskip || 1;
+        var skipLines = args.importskip || 0;
         var limitLines = args.importlimit || 0;
         var maxLine = skipLines + limitLines;
         var time = new Date().getTime();
@@ -289,7 +298,7 @@ else if (args.importcsv) {
         var columns = 0;
         reader.on('line', function (line) {
             if (lines == 0) {
-                columns = line.split(',');
+                columns = line.split(',').length;
                 lines++;
                 return;
             }
@@ -300,14 +309,15 @@ else if (args.importcsv) {
                 return;
             }
 
+            nextLine = lines + (affinity + numWorkers - 1);
             lines++;
             readLines++;
-            nextLine = lines + (affinity + numWorkers);
             if (readLines <= skipLines) {
                 return;
             }
-            if (limitLines > 0 && maxLine <= readLines) {
-                parser.emit('end');
+            if (limitLines > 0 && maxLine < readLines) {
+                process.send({ 'speed': speed, 'lines': readLines - skipLines });
+                reader.close();
                 return;
             }
 
@@ -391,29 +401,20 @@ else if (args.importcsv) {
             }
             documentGraph.readDocument(id, text, title, link, categories);
 
-            //process.stdout.clearLine();
-            //process.stdout.cursorTo(0);
             var newTime = new Date().getTime();
             iterCount++;
             if ((newTime - time) > 1000) {
                 speed = Math.round(100 * (iterCount / ((newTime - time) / 1000))) / 100;
                 iterCount = 0;
                 time = newTime;
+                process.send({ 'speed': speed, 'lines': readLines - 1 - skipLines });
             }
-
-            data = null;
-            text = null;
-            title = null;
-            link = null;
-            categories = null;
-            id = null;
-            //process.send(clc.xterm(150).bold(spinner.current + " [" + cluster.worker.process.pid + "] Processed ") + (readLines - skipLines) + " lines @ " + clc.xterm(85).bold((speed) + "/sec"));
-            process.send({ 'speed': speed, 'lines': readLines - skipLines });
         });
 
         reader.on('close', function () {
-            process.send({ 'speed': speed, 'lines': readLines - skipLines });
+            process.send({ 'speed': speed, 'lines': readLines - 1 - skipLines });
             process.exit(0);
+            return;
         });
     }
 }
