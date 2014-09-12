@@ -41,7 +41,6 @@
     "xml-object-stream": "~0.2.0",
     "walk": "~2.2.1",
     "burst-trie": "~0.1.0",
-    "judy": "~1.0.2",
     "robots": "~0.9.4",
     "request": "latest",
     "minimist": "latest",
