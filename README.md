@@ -28,6 +28,8 @@ npm install salient
 * Corpus Coverage Testing
 * Vocabulary Merging
 * Sentiment Terms
+* Web Crawling
+* Document Search (backed by Redis)
 
 ### Usage
 

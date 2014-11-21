@@ -52,7 +52,8 @@
     "hiredis": "latest",
     "cli-color": "latest",
     "node-redis-cluster": "nyxtom/redis-cluster",
-    "term-spinner": "nyxtom/node-term-spinner"
+    "term-spinner": "nyxtom/node-term-spinner",
+    "redis-stream": "latest"
   },
   "devDependencies": {
     "jasmine-node": "~1.11.0"
