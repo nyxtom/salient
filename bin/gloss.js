@@ -12,5 +12,5 @@ var g = new salient.glossary.Glossary();
 g.parse(args._.slice(2)[0]);
 var items = g.toJSON();
 for (var i = 0; i < items.length; i++) {
-    console.log(items[i], null, 2);
+    console.log(items[i]);
 }
