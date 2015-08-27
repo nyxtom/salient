@@ -1,6 +1,6 @@
 {
   "name": "salient",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Salient is a natural language processing and sentiment analysis library",
   "main": "index.js",
   "scripts": {
