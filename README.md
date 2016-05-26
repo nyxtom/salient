@@ -152,6 +152,7 @@ As you can see in the code sample below, I have done a bit of chunking for terms
 var salient = require('salient');
 var glossary = new salient.glossary.Glossary();
 glossary.parse("This is going to be an awesome test");
+glossary.toJSON();
 
 { term: 'This is going to be',
   distinct: 'is going to be',
@@ -219,6 +220,7 @@ The flow of logic is further helped when I include negations of any sort show be
 var salient = require('salient');
 var glossary = new salient.glossary.Glossary();
 glossary.parse("This is never going to be an awesome test");
+glossary.toJSON();
 
 { term: 'This is',
   distinct: 'is',
@@ -291,6 +293,17 @@ glossary.parse("This is never going to be an awesome test");
   termMap: [ 'an', 'awesome', 'test' ],
   distinct: 'awesome test' }
 
+```
+
+You can additionally use the output of the glossary.parse function to retreive a simple concepts map. This effectively is looking for noun terms within the parsed output of the glossary. So the above example would look like so:
+
+```
+var salient = require('salient');
+var glossary = new salient.glossary.Glossary();
+glossary.parse("This is never going to be an awesome test");
+glossary.concepts();
+
+[ 'awesome test' ]
 ```
 
 ## Sentiment Analysis
